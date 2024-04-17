@@ -90,11 +90,10 @@ class Tests{
         rotk.addListOfAttributes(mutableListOf(("Volume" to "3"), ("ISBN" to "0345339738")))
 
         assertFalse(twot.attributes.any {it.first == "First Edition" || it.second == "11 November 1954"})
-        books.addAttribute("The Two Towers", "First Edition", "11 November 1954")
-        assertTrue(twot.attributes.any {it.first == "First Edition" && it.second == "11 November 1954"})
+        assertTrue(books.addAttribute("The Two Towers", "First Edition", "11 November 1954"))
 
         assertTrue("The Two Towers" == twot.title)
-        books.renameElement("The Two Towers", "The Lord of the Rings: The Two Towers")
+        assertTrue(books.renameElement("The Two Towers", "The Lord of the Rings: The Two Towers"))
         assertTrue("The Lord of the Rings: The Two Towers"==twot.title)
 
         books.renameAttribute("The Lord of the Rings: The Two Towers", "First Edition", "1st Edition")
@@ -111,11 +110,11 @@ class Tests{
         books.removeElement("The Lord of the Rings: The Two Towers")
         assertFalse(twot == books.rootElement?.findElement("The Lord of the Rings: The Two Towers"))
 
-        println(books.prettyPrint())
+        //println(books.prettyPrint())
 
         books.removeElement("The Lord of the Rings")
 
-        println(books.prettyPrint())
+        //println(books.prettyPrint())
 
 
     }

@@ -26,19 +26,28 @@ data class Element(
         attributes.addAll(attributesToAdd)
     }
 
-    fun removeAttribute(attributeName: String){
+    fun removeAttribute(attributeName: String): Boolean{
         val i = attributes.indexOfFirst { it.first == attributeName }
-        if (i != -1) attributes.removeAt(i) else throw NoSuchElementException("Attribute '$attributeName' not found")
+        return if (i != -1) {
+            attributes.removeAt(i)
+            true
+        } else false
     }
 
-    fun alterAttributeName(attributeName: String, newName: String){
+    fun alterAttributeName(attributeName: String, newName: String): Boolean{
         val i = attributes.indexOfFirst { it.first == attributeName }
-        if (i != -1) attributes[i] = Pair(newName, attributes[i].second) else throw NoSuchElementException("Attribute '$attributeName' not found")
+        return if (i != -1) {
+            attributes[i] = Pair(newName, attributes[i].second)
+            true
+        } else false
     }
 
-    fun alterAttributeContent(attributeName: String, newContent: String){
+    fun alterAttributeContent(attributeName: String, newContent: String): Boolean{
         val i = attributes.indexOfFirst { it.first == attributeName }
-        if (i != -1) attributes[i]=(attributeName to newContent) else throw NoSuchElementException("Attribute '$attributeName' not found")
+        return if (i != -1) {
+            attributes[i]=(attributeName to newContent)
+            true
+        } else false
     }
 
     fun findElement(title: String): Element? {

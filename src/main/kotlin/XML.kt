@@ -1,3 +1,5 @@
+import java.io.File
+
 data class XML(
     var title: String,
     var version: String,
@@ -5,36 +7,51 @@ data class XML(
     var rootElement: Element?
 ) {
 
-    fun addAttribute(elementTitle: String, newAttribute: String, newContent: String) {
+    fun addAttribute(elementTitle: String, newAttribute: String, newContent: String): Boolean {
         val element = rootElement?.findElement(elementTitle)
-        if (element != null) element.addAttribute(newAttribute, newContent) else throw NoSuchElementException("Element '$elementTitle' not found")
+        return if (element != null) {
+            element.addAttribute(newAttribute, newContent)
+            true
+        }  else false
     }
 
-    fun renameElement(elementTitle: String, newTitle: String){
+    fun renameElement(elementTitle: String, newTitle: String): Boolean {
         val element = rootElement?.findElement(elementTitle)
-        if (element != null) element.title = newTitle else throw NoSuchElementException("Element '$elementTitle' not found")
+        return if (element != null) {
+            element.title = newTitle
+            true
+        } else false
     }
 
-    fun renameAttribute(elementTitle: String, attributeName: String, newName: String){
+    fun renameAttribute(elementTitle: String, attributeName: String, newName: String): Boolean{
         val element = rootElement?.findElement(elementTitle)
-        if (element != null) element.alterAttributeName(attributeName, newName)
-        else throw NoSuchElementException("Element '$elementTitle' not found")
+        return if (element != null){
+            element.alterAttributeName(attributeName, newName)
+            true
+        }
+        else false
     }
 
-    fun removeAttribute(elementTitle: String, attributeName: String){
+    fun removeAttribute(elementTitle: String, attributeName: String): Boolean{
         val element = rootElement?.findElement(elementTitle)
-        if (element != null) element.removeAttribute(attributeName) else throw NoSuchElementException("Element '$elementTitle' not found")
+        return if (element != null){
+            element.removeAttribute(attributeName)
+            true
+        } else false
     }
 
-    fun removeElement(elementTitle: String){
+    fun removeElement(elementTitle: String): Boolean{
         val element = rootElement?.findElement(elementTitle)
-        if(element == rootElement)
+        return if(element == rootElement) {
             rootElement = null
+            true
+        }
         else if (element != null) {
             val parent = element.parent
             parent?.removeChild(element)
+            true
         }
-        else throw NoSuchElementException("Element '$elementTitle' not found")
+        else false
     }
 
 
@@ -42,9 +59,11 @@ data class XML(
         val stringBuilder = StringBuilder()
         stringBuilder.appendLine("<?xml version=\"$version\" encoding=\"$encoding\"?>")
         if(rootElement == null){
+            File("New File").writeText(stringBuilder.toString())
             return stringBuilder.toString()
         }
         appendElement(rootElement, stringBuilder, 0)
+        File("New File").writeText(stringBuilder.toString())
         return stringBuilder.toString()
     }
 
