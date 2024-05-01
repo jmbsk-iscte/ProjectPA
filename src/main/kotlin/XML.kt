@@ -59,11 +59,11 @@ data class XML(
         val stringBuilder = StringBuilder()
         stringBuilder.appendLine("<?xml version=\"$version\" encoding=\"$encoding\"?>")
         if(rootElement == null){
-            File("New File").writeText(stringBuilder.toString())
+            File("NewFile").writeText(stringBuilder.toString())
             return stringBuilder.toString()
         }
         appendElement(rootElement, stringBuilder, 0)
-        File("New File").writeText(stringBuilder.toString())
+        File("NewFile").writeText(stringBuilder.toString())
         return stringBuilder.toString()
     }
 
