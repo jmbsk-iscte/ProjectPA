@@ -15,6 +15,7 @@ data class XML(
         }  else false
     }
 
+
     fun renameElement(elementTitle: String, newTitle: String): Boolean {
         val element = rootElement?.findElement(elementTitle)
         return if (element != null) {
@@ -57,31 +58,33 @@ data class XML(
 
     fun prettyPrint(): String {
         val stringBuilder = StringBuilder()
+        val title = "TextFile"
         stringBuilder.appendLine("<?xml version=\"$version\" encoding=\"$encoding\"?>")
         if(rootElement == null){
-            File("NewFile").writeText(stringBuilder.toString())
+            File(title).writeText(stringBuilder.toString())
             return stringBuilder.toString()
         }
         appendElement(rootElement, stringBuilder, 0)
-        File("NewFile").writeText(stringBuilder.toString())
+        File(title).writeText(stringBuilder.toString())
         return stringBuilder.toString()
     }
 
     private fun appendElement(element: Element?, stringBuilder: StringBuilder, indentLevel: Int) {
         val indent = " ".repeat(indentLevel * 4)
-        stringBuilder.append("$indent<${element!!.title}")
+        stringBuilder.append("$indent<${element!!.title}>")
 
         if (element.attributes.isNotEmpty()) {
+            val newIdent = " ".repeat((indentLevel + 1)* 4)
             element.attributes.forEach { (name, value) ->
-                stringBuilder.append(" $name=\"$value\"")
+                stringBuilder.appendLine()
+                stringBuilder.append("$newIdent<$name>$value<$name/>")
             }
         }
 
         if (element.children.isEmpty()) {
-            stringBuilder.append("/>")
             stringBuilder.appendLine()
+            stringBuilder.appendLine("$indent</${element.title}>")
         } else {
-            stringBuilder.append(">")
             stringBuilder.appendLine()
             element.children.forEach { child ->
                 appendElement(child, stringBuilder, indentLevel + 1)

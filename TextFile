@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TheLordOfTheRings>
+    <TheFellowshipOfTheRing>
+        <ISBN>0618002227<ISBN/>
+        <Volume>1<Volume/>
+    </TheFellowshipOfTheRing>
+    <TheLordOfTheRings:TheTwoTowers>
+        <Volume>2<Volume/>
+        <ISBN>0008376077<ISBN/>
+    </TheLordOfTheRings:TheTwoTowers>
+    <TheReturnOfTheKing>
+        <Volume>3<Volume/>
+        <ISBN>0345339738<ISBN/>
+    </TheReturnOfTheKing>
+</TheLordOfTheRings>

@@ -1,0 +1,231 @@
+Index: src/main/kotlin/XML.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.io.File\r\n\r\ndata class XML(\r\n    var title: String,\r\n    var version: String,\r\n    var encoding: String,\r\n    var rootElement: Element?\r\n) {\r\n\r\n    fun addAttribute(elementTitle: String, newAttribute: String, newContent: String): Boolean {\r\n        val element = rootElement?.findElement(elementTitle)\r\n        return if (element != null) {\r\n            element.addAttribute(newAttribute, newContent)\r\n            true\r\n        }  else false\r\n    }\r\n\r\n    fun renameElement(elementTitle: String, newTitle: String): Boolean {\r\n        val element = rootElement?.findElement(elementTitle)\r\n        return if (element != null) {\r\n            element.title = newTitle\r\n            true\r\n        } else false\r\n    }\r\n\r\n    fun renameAttribute(elementTitle: String, attributeName: String, newName: String): Boolean{\r\n        val element = rootElement?.findElement(elementTitle)\r\n        return if (element != null){\r\n            element.alterAttributeName(attributeName, newName)\r\n            true\r\n        }\r\n        else false\r\n    }\r\n\r\n    fun removeAttribute(elementTitle: String, attributeName: String): Boolean{\r\n        val element = rootElement?.findElement(elementTitle)\r\n        return if (element != null){\r\n            element.removeAttribute(attributeName)\r\n            true\r\n        } else false\r\n    }\r\n\r\n    fun removeElement(elementTitle: String): Boolean{\r\n        val element = rootElement?.findElement(elementTitle)\r\n        return if(element == rootElement) {\r\n            rootElement = null\r\n            true\r\n        }\r\n        else if (element != null) {\r\n            val parent = element.parent\r\n            parent?.removeChild(element)\r\n            true\r\n        }\r\n        else false\r\n    }\r\n\r\n\r\n    fun prettyPrint(): String {\r\n        val stringBuilder = StringBuilder()\r\n        stringBuilder.appendLine(\"<?xml version=\\\"$version\\\" encoding=\\\"$encoding\\\"?>\")\r\n        if(rootElement == null){\r\n            File(\"New File\").writeText(stringBuilder.toString())\r\n            return stringBuilder.toString()\r\n        }\r\n        appendElement(rootElement, stringBuilder, 0)\r\n        File(\"New File\").writeText(stringBuilder.toString())\r\n        return stringBuilder.toString()\r\n    }\r\n\r\n    private fun appendElement(element: Element?, stringBuilder: StringBuilder, indentLevel: Int) {\r\n        val indent = \" \".repeat(indentLevel * 4)\r\n        stringBuilder.append(\"$indent<${element!!.title}\")\r\n\r\n        if (element.attributes.isNotEmpty()) {\r\n            element.attributes.forEach { (name, value) ->\r\n                stringBuilder.append(\" $name=\\\"$value\\\"\")\r\n            }\r\n        }\r\n\r\n        if (element.children.isEmpty()) {\r\n            stringBuilder.append(\"/>\")\r\n            stringBuilder.appendLine()\r\n        } else {\r\n            stringBuilder.append(\">\")\r\n            stringBuilder.appendLine()\r\n            element.children.forEach { child ->\r\n                appendElement(child, stringBuilder, indentLevel + 1)\r\n            }\r\n            stringBuilder.appendLine(\"$indent</${element.title}>\")\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/kotlin/XML.kt b/src/main/kotlin/XML.kt
+--- a/src/main/kotlin/XML.kt	
++++ b/src/main/kotlin/XML.kt	
+@@ -54,34 +54,34 @@
+         else false
+     }
+ 
+-
+     fun prettyPrint(): String {
+         val stringBuilder = StringBuilder()
+         stringBuilder.appendLine("<?xml version=\"$version\" encoding=\"$encoding\"?>")
+         if(rootElement == null){
+-            File("New File").writeText(stringBuilder.toString())
++            File(title).writeText(stringBuilder.toString())
+             return stringBuilder.toString()
+         }
+         appendElement(rootElement, stringBuilder, 0)
+-        File("New File").writeText(stringBuilder.toString())
++        File(title).writeText(stringBuilder.toString())
+         return stringBuilder.toString()
+     }
+ 
+     private fun appendElement(element: Element?, stringBuilder: StringBuilder, indentLevel: Int) {
+         val indent = " ".repeat(indentLevel * 4)
+-        stringBuilder.append("$indent<${element!!.title}")
++        stringBuilder.append("$indent<${element!!.title}>")
+ 
+         if (element.attributes.isNotEmpty()) {
++            val newIndent = " ".repeat((indentLevel+1) * 4)
+             element.attributes.forEach { (name, value) ->
+-                stringBuilder.append(" $name=\"$value\"")
++                stringBuilder.appendLine()
++                stringBuilder.append("$newIndent<$name>$value</$name>")
+             }
+         }
+ 
+         if (element.children.isEmpty()) {
+-            stringBuilder.append("/>")
+             stringBuilder.appendLine()
++            stringBuilder.appendLine("$indent</${element.title}>")
+         } else {
+-            stringBuilder.append(">")
+             stringBuilder.appendLine()
+             element.children.forEach { child ->
+                 appendElement(child, stringBuilder, indentLevel + 1)
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"f0476d3c-0031-49f0-af1e-f47cc3b5698c\" name=\"Changes\" comment=\"Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/kotlin/Element.kt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/kotlin/Element.kt\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/kotlin/XML.kt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/kotlin/XML.kt\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/test/kotlin/Tests.kt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/test/kotlin/Tests.kt\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Kotlin File\" />\r\n        <option value=\"Kotlin Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;jmbsk-iscte&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">\r\n    <option name=\"selectedUrlAndAccountId\">\r\n      <UrlAndAccount>\r\n        <option name=\"accountId\" value=\"65b9e287-5b0a-47df-bb9b-f5a994a10879\" />\r\n        <option name=\"url\" value=\"https://github.com/jmbsk-iscte/ProjectPA\" />\r\n      </UrlAndAccount>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 0\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2ey3VI0Tzy8BjQY3FxiVk6uWiOg\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,\r\n    &quot;JUnit.Tests.test.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddAndRemoveElementsFromElement.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddAndRemoveFromElement.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddAttributeDoc.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddRemoveAndAlterAttributesFromElement.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testDoc.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testElementCreation.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testGettingChildAndParent.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testPrettyPrint.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testXMLCreation.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.tests.executor&quot;: &quot;Run&quot;,\r\n    &quot;Kotlin script (Beta).Unnamed.executor&quot;: &quot;Coverage&quot;,\r\n    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;master&quot;,\r\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\r\n    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/skarp/git/Teste2&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RunManager\" selected=\"JUnit.Tests.testAddRemoveAndAlterAttributesFromElement\">\r\n    <configuration name=\"Tests.testAddAndRemoveElementsFromElement\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"testAddAndRemoveElementsFromElement\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Tests.testAddRemoveAndAlterAttributesFromElement\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"testAddRemoveAndAlterAttributesFromElement\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Tests.testDoc\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"testDoc\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Tests.testElementCreation\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"testElementCreation\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Tests.testXMLCreation\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"testXMLCreation\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"JUnit.Tests.testAddRemoveAndAlterAttributesFromElement\" />\r\n        <item itemvalue=\"JUnit.Tests.testAddAndRemoveElementsFromElement\" />\r\n        <item itemvalue=\"JUnit.Tests.testElementCreation\" />\r\n        <item itemvalue=\"JUnit.Tests.testXMLCreation\" />\r\n        <item itemvalue=\"JUnit.Tests.testDoc\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"jdk-21.0.2-openjdk-21.0.2-4caba194b151-4f524021\" />\r\n        <option value=\"jdk-22-openjdk-22-3183f394aec4-bad0321e\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"f0476d3c-0031-49f0-af1e-f47cc3b5698c\" name=\"Changes\" comment=\"\" />\r\n      <created>1712863013596</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1712863013596</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Criação do projecto, das classes XML.kt e Element.kt\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1712867353129</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1712867353129</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Feito 1. a 4., falta escrita em ficheiro.\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1713304596688</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713304596688</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1713351466394</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713351466394</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"4\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Criação do projecto, das classes XML.kt e Element.kt\" />\r\n    <MESSAGE value=\"Feito 1. a 4., falta escrita em ficheiro.\" />\r\n    <MESSAGE value=\"Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/ProjectPA$Unnamed.ic\" NAME=\"Unnamed Coverage Results\" MODIFIED=\"1713179847930\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -4,9 +4,8 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).">
++    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="Feito escrita em ficheiro, falta objectos visitantes(?).">
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Element.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Element.kt" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/kotlin/XML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/XML.kt" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" afterDir="false" />
+     </list>
+@@ -24,12 +23,15 @@
+     </option>
+   </component>
+   <component name="Git.Settings">
++    <option name="RECENT_BRANCH_BY_REPOSITORY">
++      <map>
++        <entry key="$PROJECT_DIR$" value="master" />
++      </map>
++    </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+   <component name="GitHubPullRequestSearchHistory">{
+   &quot;lastFilter&quot;: {
+-    &quot;state&quot;: &quot;OPEN&quot;,
+-    &quot;assignee&quot;: &quot;jmbsk-iscte&quot;
+   }
+ }</component>
+   <component name="GithubPullRequestsUISettings">
+@@ -51,39 +53,39 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+-    &quot;JUnit.Tests.test.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddAndRemoveElementsFromElement.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddAndRemoveFromElement.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddAttributeDoc.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddRemoveAndAlterAttributesFromElement.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testDoc.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testElementCreation.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testGettingChildAndParent.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testPrettyPrint.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testXMLCreation.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.tests.executor&quot;: &quot;Run&quot;,
+-    &quot;Kotlin script (Beta).Unnamed.executor&quot;: &quot;Coverage&quot;,
+-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,
+-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/skarp/git/Teste2&quot;,
+-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "Downloaded.Files.Path.Enabled": "false",
++    "JUnit.Tests.test.executor": "Run",
++    "JUnit.Tests.testAddAndRemoveElementsFromElement.executor": "Run",
++    "JUnit.Tests.testAddAndRemoveFromElement.executor": "Run",
++    "JUnit.Tests.testAddAttributeDoc.executor": "Run",
++    "JUnit.Tests.testAddRemoveAndAlterAttributesFromElement.executor": "Run",
++    "JUnit.Tests.testDoc.executor": "Run",
++    "JUnit.Tests.testElementCreation.executor": "Run",
++    "JUnit.Tests.testGettingChildAndParent.executor": "Run",
++    "JUnit.Tests.testPrettyPrint.executor": "Run",
++    "JUnit.Tests.testXMLCreation.executor": "Run",
++    "JUnit.Tests.tests.executor": "Run",
++    "Kotlin script (Beta).Unnamed.executor": "Coverage",
++    "Repository.Attach.Annotations": "false",
++    "Repository.Attach.JavaDocs": "false",
++    "Repository.Attach.Sources": "false",
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
++    "git-widget-placeholder": "Joao",
++    "ignore.virus.scanning.warn.message": "true",
++    "jdk.selected.JAVA_MODULE": "21",
++    "kotlin-language-version-configured": "true",
++    "last_opened_file_path": "C:/Users/skarp/git/Teste2",
++    "project.structure.last.edited": "Project",
++    "project.structure.proportion": "0.15",
++    "project.structure.side.proportion": "0.2",
++    "settings.editor.selected.configurable": "preferences.lookFeel"
+   }
+-}</component>
+-  <component name="RunManager" selected="JUnit.Tests.testAddRemoveAndAlterAttributesFromElement">
++}]]></component>
++  <component name="RunManager" selected="JUnit.Tests.testDoc">
+     <configuration name="Tests.testAddAndRemoveElementsFromElement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="ProjectPA" />
+       <option name="PACKAGE_NAME" value="" />
+@@ -114,21 +116,21 @@
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="Tests.testElementCreation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="Tests.testGettingChildAndParent" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="ProjectPA" />
+       <option name="PACKAGE_NAME" value="" />
+       <option name="MAIN_CLASS_NAME" value="Tests" />
+-      <option name="METHOD_NAME" value="testElementCreation" />
++      <option name="METHOD_NAME" value="testGettingChildAndParent" />
+       <option name="TEST_OBJECT" value="method" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="Tests.testXMLCreation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="Tests.testPrettyPrint" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="ProjectPA" />
+       <option name="PACKAGE_NAME" value="" />
+       <option name="MAIN_CLASS_NAME" value="Tests" />
+-      <option name="METHOD_NAME" value="testXMLCreation" />
++      <option name="METHOD_NAME" value="testPrettyPrint" />
+       <option name="TEST_OBJECT" value="method" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+@@ -136,11 +138,11 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="JUnit.Tests.testDoc" />
++        <item itemvalue="JUnit.Tests.testPrettyPrint" />
++        <item itemvalue="JUnit.Tests.testGettingChildAndParent" />
+         <item itemvalue="JUnit.Tests.testAddRemoveAndAlterAttributesFromElement" />
+         <item itemvalue="JUnit.Tests.testAddAndRemoveElementsFromElement" />
+-        <item itemvalue="JUnit.Tests.testElementCreation" />
+-        <item itemvalue="JUnit.Tests.testXMLCreation" />
+-        <item itemvalue="JUnit.Tests.testDoc" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -185,7 +187,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1713351466394</updated>
+     </task>
+-    <option name="localTasksCounter" value="4" />
++    <task id="LOCAL-00004" summary="Feito escrita em ficheiro, falta objectos visitantes(?).">
++      <option name="closed" value="true" />
++      <created>1713375394274</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1713375394274</updated>
++    </task>
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -203,7 +213,8 @@
+     <MESSAGE value="Criação do projecto, das classes XML.kt e Element.kt" />
+     <MESSAGE value="Feito 1. a 4., falta escrita em ficheiro." />
+     <MESSAGE value="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?)." />
+-    <option name="LAST_COMMIT_MESSAGE" value="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?)." />
++    <MESSAGE value="Feito escrita em ficheiro, falta objectos visitantes(?)." />
++    <option name="LAST_COMMIT_MESSAGE" value="Feito escrita em ficheiro, falta objectos visitantes(?)." />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+     <SUITE FILE_PATH="coverage/ProjectPA$Unnamed.ic" NAME="Unnamed Coverage Results" MODIFIED="1713179847930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />

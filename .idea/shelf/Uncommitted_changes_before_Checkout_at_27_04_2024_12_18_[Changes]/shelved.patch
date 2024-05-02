@@ -1,0 +1,10 @@
+Index: prueba
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>ffff\r\n
+===================================================================
+diff --git a/prueba b/prueba
+--- a/prueba	
++++ b/prueba	
+@@ -1,1 +1,0 @@
+-ffff

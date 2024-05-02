@@ -1,0 +1,131 @@
+Index: src/test/kotlin/Tests.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import org.junit.jupiter.api.Assertions.*\r\nimport org.junit.jupiter.api.Test\r\n\r\nclass Tests{\r\n\r\n    val lotr = Element(\"The Lord of the Rings\")\r\n\r\n    val books = XML(\"Book\", \"1.0\", \"UTF-8\", lotr)\r\n\r\n    val fell = Element(\"The Fellowship of the Ring\", lotr)\r\n    val twot = Element(\"The Two Towers\", lotr)\r\n    val rotk = Element(\"The Return of the King\", lotr)\r\n\r\n    val fellMovie = Element(\"The Lord of the Rings: The Fellowship of the Ring\")\r\n\r\n\r\n\r\n    @Test\r\n    fun testXMLCreation(){\r\n        assertTrue(\"Book\" == books.title)\r\n        assertTrue(\"1.0\" == books.version)\r\n        assertTrue(\"UTF-8\" == books.encoding)\r\n    }\r\n\r\n    @Test\r\n    fun testElementCreation(){\r\n        assertTrue(\"The Lord of the Rings\" == lotr.title)\r\n        assertFalse(lotr.children.isEmpty())\r\n        lotr.addAttribute(\"Genre\", \"Epic High Fantasy\")\r\n        lotr.addAttribute(\"First Publication\", \"1954\")\r\n        assertTrue((\"Genre\" to \"Epic High Fantasy\") == lotr.attributes[0])\r\n        assertFalse((\"Genre\" to \"Epic High Fantasy\") == lotr.attributes[1])\r\n        assertTrue((\"First Publication\" to \"1954\") == lotr.attributes[1])\r\n        assertTrue(lotr.children.contains(twot))\r\n    }\r\n\r\n    @Test\r\n    fun testAddAndRemoveElementsFromElement(){\r\n        assertTrue(lotr.children.contains(rotk))\r\n        lotr.removeChild(rotk)\r\n        assertFalse(lotr.children.contains(rotk))\r\n        lotr.addChild(rotk)\r\n        assertTrue(lotr.children.contains(rotk))\r\n    }\r\n\r\n    @Test\r\n    fun testAddRemoveAndAlterAttributesFromElement(){\r\n        lotr.addAttribute(\"Genre\", \"Epic High Fantasy\")\r\n        lotr.addAttribute(\"First Publication\", \"1954\")\r\n\r\n        assertTrue(\"First Publication\" == lotr.attributes[1].first)\r\n\r\n        fell.addListOfAttributes(mutableListOf((\"ISBN\" to \"0618002227\"), (\"Volume\" to \"2\")))\r\n\r\n        assertTrue(fell.attributes.any {it.first == \"ISBN\" && it.second == \"0618002227\"})\r\n\r\n        fell.removeAttribute(\"ISBN\")\r\n\r\n        assertFalse(fell.attributes.any {it.first == \"ISBN\" || it.second == \"0618002227\"})\r\n\r\n        assertTrue(\"2\" == fell.attributes[0].second)\r\n\r\n        fell.alterAttributeContent(\"Volume\", \"1\")\r\n\r\n        assertTrue(\"1\" == fell.attributes[0].second)\r\n    }\r\n\r\n    @Test\r\n    fun testGettingChildAndParent(){\r\n        assertTrue(lotr.children.containsAll(listOf(fell, twot, rotk)))\r\n        assertTrue(lotr == fell.parent)\r\n    }\r\n\r\n    @Test\r\n    fun testPrettyPrint(){\r\n        lotr.addAttribute(\"Genre\", \"Epic High Fantasy\")\r\n        lotr.addAttribute(\"First Publication\", \"1954\")\r\n        fell.addListOfAttributes(mutableListOf((\"ISBN\" to \"0618002227\"), (\"Volume\" to \"1\")))\r\n        twot.addListOfAttributes(mutableListOf((\"Volume\" to \"2\"), (\"ISBN\" to \"0008376077\")))\r\n        rotk.addListOfAttributes(mutableListOf((\"Volume\" to \"3\"), (\"ISBN\" to \"0345339738\")))\r\n        fellMovie.addListOfAttributes(mutableListOf((\"Year\" to \"2001\"), (\"Running time\" to \"178 minutes\")))\r\n        fell.addChild(fellMovie)\r\n        println(books.prettyPrint())\r\n    }\r\n\r\n    @Test\r\n    fun testDoc(){\r\n        fell.addListOfAttributes(mutableListOf((\"ISBN\" to \"0618002227\"), (\"Volume\" to \"1\")))\r\n        twot.addListOfAttributes(mutableListOf((\"Volume\" to \"2\"), (\"ISBN\" to \"0008376077\")))\r\n        rotk.addListOfAttributes(mutableListOf((\"Volume\" to \"3\"), (\"ISBN\" to \"0345339738\")))\r\n\r\n        assertFalse(twot.attributes.any {it.first == \"First Edition\" || it.second == \"11 November 1954\"})\r\n        assertTrue(books.addAttribute(\"The Two Towers\", \"First Edition\", \"11 November 1954\"))\r\n\r\n        assertTrue(\"The Two Towers\" == twot.title)\r\n        assertTrue(books.renameElement(\"The Two Towers\", \"The Lord of the Rings: The Two Towers\"))\r\n        assertTrue(\"The Lord of the Rings: The Two Towers\"==twot.title)\r\n\r\n        books.renameAttribute(\"The Lord of the Rings: The Two Towers\", \"First Edition\", \"1st Edition\")\r\n        assertTrue(twot.attributes.any {it.first == \"1st Edition\" && it.second == \"11 November 1954\"})\r\n\r\n        println(books.prettyPrint())\r\n\r\n        books.removeAttribute(\"The Lord of the Rings: The Two Towers\", \"1st Edition\")\r\n        assertFalse(twot.attributes.any {it.first == \"1st Edition\" || it.second == \"11 November 1954\"})\r\n\r\n        println(books.prettyPrint())\r\n\r\n        assertTrue(twot == books.rootElement?.findElement(\"The Lord of the Rings: The Two Towers\"))\r\n        books.removeElement(\"The Lord of the Rings: The Two Towers\")\r\n        assertFalse(twot == books.rootElement?.findElement(\"The Lord of the Rings: The Two Towers\"))\r\n\r\n        //println(books.prettyPrint())\r\n\r\n        books.removeElement(\"The Lord of the Rings\")\r\n\r\n        //println(books.prettyPrint())\r\n\r\n\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/kotlin/Tests.kt b/src/test/kotlin/Tests.kt
+--- a/src/test/kotlin/Tests.kt	
++++ b/src/test/kotlin/Tests.kt	
+@@ -3,34 +3,36 @@
+ 
+ class Tests{
+ 
+-    val lotr = Element("The Lord of the Rings")
++    val lotr = Element("Book")
+ 
+-    val books = XML("Book", "1.0", "UTF-8", lotr)
++    val books = XML("Books", "1.0", "UTF-8", lotr)
+ 
+-    val fell = Element("The Fellowship of the Ring", lotr)
+-    val twot = Element("The Two Towers", lotr)
+-    val rotk = Element("The Return of the King", lotr)
++    val fell = Element("FotR", lotr)
++    val twot = Element("TT", lotr)
++    val rotk = Element("RotK", lotr)
+ 
+-    val fellMovie = Element("The Lord of the Rings: The Fellowship of the Ring")
++    val fellMovie = Element("FotR-Movie")
+ 
+ 
+ 
+     @Test
+     fun testXMLCreation(){
+-        assertTrue("Book" == books.title)
++        assertTrue("Books" == books.title)
+         assertTrue("1.0" == books.version)
+         assertTrue("UTF-8" == books.encoding)
+     }
+ 
+     @Test
+     fun testElementCreation(){
+-        assertTrue("The Lord of the Rings" == lotr.title)
++        assertTrue("Book" == lotr.title)
+         assertFalse(lotr.children.isEmpty())
++        lotr.addAttribute("Title", "The Lord of the Rings")
+         lotr.addAttribute("Genre", "Epic High Fantasy")
+-        lotr.addAttribute("First Publication", "1954")
+-        assertTrue(("Genre" to "Epic High Fantasy") == lotr.attributes[0])
+-        assertFalse(("Genre" to "Epic High Fantasy") == lotr.attributes[1])
+-        assertTrue(("First Publication" to "1954") == lotr.attributes[1])
++        lotr.addAttribute("FirstPublication", "1954")
++        assertTrue(("Title" to "The Lord of the Rings") == lotr.attributes[0])
++        assertTrue(("Genre" to "Epic High Fantasy") == lotr.attributes[1])
++        assertFalse(("Genre" to "Epic High Fantasy") == lotr.attributes[2])
++        assertTrue(("FirstPublication" to "1954") == lotr.attributes[2])
+         assertTrue(lotr.children.contains(twot))
+     }
+ 
+@@ -45,10 +47,11 @@
+ 
+     @Test
+     fun testAddRemoveAndAlterAttributesFromElement(){
++        lotr.addAttribute("Title", "The Lord of the Rings")
+         lotr.addAttribute("Genre", "Epic High Fantasy")
+-        lotr.addAttribute("First Publication", "1954")
++        lotr.addAttribute("FirstPublication", "1954")
+ 
+-        assertTrue("First Publication" == lotr.attributes[1].first)
++        assertTrue("FirstPublication" == lotr.attributes[2].first)
+ 
+         fell.addListOfAttributes(mutableListOf(("ISBN" to "0618002227"), ("Volume" to "2")))
+ 
+@@ -74,11 +77,11 @@
+     @Test
+     fun testPrettyPrint(){
+         lotr.addAttribute("Genre", "Epic High Fantasy")
+-        lotr.addAttribute("First Publication", "1954")
++        lotr.addAttribute("FirstPublication", "1954")
+         fell.addListOfAttributes(mutableListOf(("ISBN" to "0618002227"), ("Volume" to "1")))
+         twot.addListOfAttributes(mutableListOf(("Volume" to "2"), ("ISBN" to "0008376077")))
+         rotk.addListOfAttributes(mutableListOf(("Volume" to "3"), ("ISBN" to "0345339738")))
+-        fellMovie.addListOfAttributes(mutableListOf(("Year" to "2001"), ("Running time" to "178 minutes")))
++        fellMovie.addListOfAttributes(mutableListOf(("Year" to "2001"), ("Runtime" to "178")))
+         fell.addChild(fellMovie)
+         println(books.prettyPrint())
+     }
+@@ -89,30 +92,30 @@
+         twot.addListOfAttributes(mutableListOf(("Volume" to "2"), ("ISBN" to "0008376077")))
+         rotk.addListOfAttributes(mutableListOf(("Volume" to "3"), ("ISBN" to "0345339738")))
+ 
+-        assertFalse(twot.attributes.any {it.first == "First Edition" || it.second == "11 November 1954"})
+-        assertTrue(books.addAttribute("The Two Towers", "First Edition", "11 November 1954"))
++        assertFalse(twot.attributes.any {it.first == "FirstEdition" || it.second == "11 November 1954"})
++        assertTrue(books.addAttribute("TT", "FirstEdition", "11-11-1954"))
+ 
+-        assertTrue("The Two Towers" == twot.title)
+-        assertTrue(books.renameElement("The Two Towers", "The Lord of the Rings: The Two Towers"))
+-        assertTrue("The Lord of the Rings: The Two Towers"==twot.title)
++        assertTrue("TT" == twot.title)
++        assertTrue(books.renameElement("TT", "LotR:TT"))
++        assertTrue("LotR:TT"==twot.title)
+ 
+-        books.renameAttribute("The Lord of the Rings: The Two Towers", "First Edition", "1st Edition")
+-        assertTrue(twot.attributes.any {it.first == "1st Edition" && it.second == "11 November 1954"})
++        books.renameAttribute("LotR:TT", "FirstEdition", "1stEdition")
++        assertTrue(twot.attributes.any {it.first == "1stEdition" && it.second == "11-11-1954"})
+ 
+         println(books.prettyPrint())
+ 
+-        books.removeAttribute("The Lord of the Rings: The Two Towers", "1st Edition")
+-        assertFalse(twot.attributes.any {it.first == "1st Edition" || it.second == "11 November 1954"})
++        books.removeAttribute("LotR:TT", "1stEdition")
++        assertFalse(twot.attributes.any {it.first == "1stEdition" || it.second == "11-11-1954"})
+ 
+         println(books.prettyPrint())
+ 
+-        assertTrue(twot == books.rootElement?.findElement("The Lord of the Rings: The Two Towers"))
+-        books.removeElement("The Lord of the Rings: The Two Towers")
+-        assertFalse(twot == books.rootElement?.findElement("The Lord of the Rings: The Two Towers"))
++        assertTrue(twot == books.rootElement?.findElement("LotR:TT"))
++        books.removeElement("LotR:TT")
++        assertFalse(twot == books.rootElement?.findElement("LotR:TT"))
+ 
+         //println(books.prettyPrint())
+ 
+-        books.removeElement("The Lord of the Rings")
++        books.removeElement("LotR")
+ 
+         //println(books.prettyPrint())
+ 
