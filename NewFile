@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TheLordOfTheRings>
+    <TheFellowshipOfTheRing ISBN="0618002227" Volume="1"/>
+    <TheLordOfTheRings:TheTwoTowers Volume="2" ISBN="0008376077"/>
+    <TheReturnOfTheKing Volume="3" ISBN="0345339738"/>
+</TheLordOfTheRings>
