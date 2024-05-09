@@ -1,5 +1,5 @@
 data class Element(
-    var title: String,
+    var tag: String,
     var parent: Element? = null,
 ){
     var children: MutableList<Element> = mutableListOf()
@@ -34,7 +34,7 @@ data class Element(
         } else false
     }
 
-    fun alterAttributeName(attributeName: String, newName: String): Boolean{
+    fun renameAttribute(attributeName: String, newName: String): Boolean{
         val i = attributes.indexOfFirst { it.first == attributeName }
         return if (i != -1) {
             attributes[i] = Pair(newName, attributes[i].second)
@@ -48,18 +48,5 @@ data class Element(
             attributes[i]=(attributeName to newContent)
             true
         } else false
-    }
-
-    fun findElement(title: String): Element? {
-        if (this.title == title) {
-            return this
-        }
-        for (child in children) {
-            val found = child.findElement(title)
-            if (found != null) {
-                return found
-            }
-        }
-        return null
     }
 }

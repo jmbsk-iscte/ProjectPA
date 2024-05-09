@@ -1,80 +1,128 @@
 import java.io.File
-
+interface Visitor {
+    fun visit(xml: XML)
+}
 data class XML(
-    var title: String,
     var version: String,
     var encoding: String,
     var rootElement: Element?
 ) {
-
-    fun addAttribute(elementTitle: String, newAttribute: String, newContent: String): Boolean {
-        val element = rootElement?.findElement(elementTitle)
-        return if (element != null) {
-            element.addAttribute(newAttribute, newContent)
-            true
-        }  else false
+    fun accept(visitor: Visitor) {
+        visitor.visit(this)
     }
 
-
-    fun renameElement(elementTitle: String, newTitle: String): Boolean {
-        val element = rootElement?.findElement(elementTitle)
-        return if (element != null) {
-            element.title = newTitle
-            true
-        } else false
-    }
-
-    fun renameAttribute(elementTitle: String, attributeName: String, newName: String): Boolean{
-        val element = rootElement?.findElement(elementTitle)
-        return if (element != null){
-            element.alterAttributeName(attributeName, newName)
-            true
+    class addAttributeVisitor(private val elementTitle: String, private val newAttribute: String, private val newContent: String) : Visitor {
+        override fun visit(xml: XML) {
+            xml.rootElement?.let { root ->
+                addAttribute(root, elementTitle, newAttribute, newContent)
+            }
         }
-        else false
-    }
 
-    fun removeAttribute(elementTitle: String, attributeName: String): Boolean{
-        val element = rootElement?.findElement(elementTitle)
-        return if (element != null){
-            element.removeAttribute(attributeName)
-            true
-        } else false
-    }
-
-    fun removeElement(elementTitle: String): Boolean{
-        val element = rootElement?.findElement(elementTitle)
-        return if(element == rootElement) {
-            rootElement = null
-            true
+        private fun addAttribute(element: Element, elementTitle: String, newAttribute: String, newContent: String) {
+            if (element.tag == elementTitle) {
+                element.addAttribute(newAttribute, newContent)
+            }
+            element.children.forEach { child ->
+                addAttribute(child, elementTitle, newAttribute, newContent)
+            }
         }
-        else if (element != null) {
-            val parent = element.parent
-            parent?.removeChild(element)
-            true
-        }
-        else false
     }
 
+    class RenameElementVisitor(private val oldTitle: String, private val newTitle: String) : Visitor {
+        override fun visit(xml: XML) {
+            xml.rootElement?.let { root ->
+                renameElement(root, oldTitle, newTitle)
+            }
+        }
+
+        private fun renameElement(element: Element, oldTitle: String, newTitle: String) {
+            if (element.tag == oldTitle) {
+                element.tag = newTitle
+            }
+            element.children.forEach { child ->
+                renameElement(child, oldTitle, newTitle)
+            }
+        }
+    }
+
+    class renameAttributeVisitor(private val elementTitle: String, private val attributeName: String, private val newName: String): Visitor{
+        override fun visit(xml: XML) {
+            xml.rootElement?.let { root ->
+                renameAttribute(root, elementTitle, attributeName, newName)
+            }
+        }
+
+        private fun renameAttribute(element: Element, elementTitle: String, attributeName: String, newName: String){
+            if(element.tag == elementTitle) {
+                element.renameAttribute(attributeName, newName)
+            }
+            element.children.forEach { child ->
+                renameAttribute(child, elementTitle, attributeName, newName)
+            }
+        }
+    }
+
+    class RemoveAttributeVisitor(private val elementTitle: String, private val attributeName: String) : Visitor {
+        override fun visit(xml: XML) {
+            xml.rootElement?.let { root ->
+                removeAttribute(root,elementTitle, attributeName)
+            }
+        }
+
+        private fun removeAttribute(element: Element, elementTitle: String, attributeName: String) {
+            if(element.tag == elementTitle) {
+                element.removeAttribute(attributeName)
+            }
+            element.children.forEach { child ->
+                removeAttribute(child, elementTitle, attributeName)
+            }
+        }
+    }
+
+    class RemoveElementVisitor(private val elementTitle: String) : Visitor {
+        override fun visit(xml: XML) {
+            xml.rootElement?.let { root ->
+                removeElement(root,elementTitle)
+            }
+        }
+
+        private fun removeElement(element: Element, elementTitle: String) {
+            var parent: Element? = null
+            if(element.tag == elementTitle) {
+                parent = element.parent
+                parent!!.removeChild(element)
+            }
+            if (parent == null) {
+                element.children.forEach { child ->
+                    removeElement(child, elementTitle)
+                }
+            }else{
+                parent.children.forEach { child ->
+                    removeElement(child, elementTitle)
+                }
+            }
+        }
+    }
 
     fun prettyPrint(): String {
         val stringBuilder = StringBuilder()
-        val title = "TextFile"
+        val xmlFile = File("TextFile")
         stringBuilder.appendLine("<?xml version=\"$version\" encoding=\"$encoding\"?>")
-        if(rootElement == null){
-            File(title).writeText(stringBuilder.toString())
+        if (rootElement == null) {
+            xmlFile.writeText(stringBuilder.toString())
             return stringBuilder.toString()
         }
         appendElement(rootElement, stringBuilder, 0)
-        File(title).writeText(stringBuilder.toString())
+        xmlFile.writeText(stringBuilder.toString())
         return stringBuilder.toString()
     }
 
     private fun appendElement(element: Element?, stringBuilder: StringBuilder, indentLevel: Int) {
         val indent = " ".repeat(indentLevel * 4)
-        stringBuilder.append("$indent<${element!!.title}>")
+        stringBuilder.append("$indent<${element!!.tag}>")
 
         if (element.attributes.isNotEmpty()) {
-            val newIdent = " ".repeat((indentLevel + 1)* 4)
+            val newIdent = " ".repeat((indentLevel + 1) * 4)
             element.attributes.forEach { (name, value) ->
                 stringBuilder.appendLine()
                 stringBuilder.append("$newIdent<$name>$value<$name/>")
@@ -83,13 +131,14 @@ data class XML(
 
         if (element.children.isEmpty()) {
             stringBuilder.appendLine()
-            stringBuilder.appendLine("$indent</${element.title}>")
+            stringBuilder.appendLine("$indent</${element.tag}>")
         } else {
             stringBuilder.appendLine()
             element.children.forEach { child ->
                 appendElement(child, stringBuilder, indentLevel + 1)
             }
-            stringBuilder.appendLine("$indent</${element.title}>")
+            stringBuilder.appendLine("$indent</${element.tag}>")
         }
+
     }
 }
