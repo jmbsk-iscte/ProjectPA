@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Student>
-    <name>'João'<name/>
-    <number>70109<number/>
-    <worker>'TRUE'<worker/>
+    <number>70109</number>
+    <name>'João'</name>
+    <worker>'TRUE'</worker>
+    <grades>
+        <Double>14.0</Double>
+        <Double>15.6</Double>
+        <Double>14.3</Double>
+        <Double>15.6</Double>
+    </grades>
 </Student>

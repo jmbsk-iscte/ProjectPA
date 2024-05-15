@@ -125,7 +125,7 @@ data class XML(
             val newIdent = " ".repeat((indentLevel + 1) * 4)
             element.attributes.forEach { (name, value) ->
                 stringBuilder.appendLine()
-                stringBuilder.append("$newIdent<$name>$value<$name/>")
+                stringBuilder.append("$newIdent<$name>$value</$name>")
             }
         }
 
