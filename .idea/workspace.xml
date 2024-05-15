@@ -4,10 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).">
+    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt">
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_24_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_24__Changes_1.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_29_[Changes]/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_29__Changes_.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_04_2024_12_18_[Changes]1/shelved.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_04_2024_12_18__Changes_1.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Book" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/NewFile" beforeDir="false" afterPath="$PROJECT_DIR$/NewFile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/XML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/XML.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectPA.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectPA.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/TextFile" beforeDir="false" afterPath="$PROJECT_DIR$/TextFile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,15 +27,15 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin File" />
         <option value="Kotlin Script" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Joao" />
+        <entry key="$PROJECT_DIR$" value="joao" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -44,6 +54,9 @@
       </UrlAndAccount>
     </option>
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -57,7 +70,9 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+    &quot;JUnit.Tests.XMLGeneratorTest.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.Tests.test.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.Tests.testAddAndRemoveElementsFromElement.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.Tests.testAddAndRemoveFromElement.executor&quot;: &quot;Run&quot;,
@@ -70,6 +85,8 @@
     &quot;JUnit.Tests.testXMLCreation.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.Tests.tests.executor&quot;: &quot;Run&quot;,
     &quot;Kotlin script (Beta).Unnamed.executor&quot;: &quot;Coverage&quot;,
+    &quot;Kotlin.ClassToXMLKt.executor&quot;: &quot;Run&quot;,
+    &quot;Kotlin.Teste2Kt.executor&quot;: &quot;Run&quot;,
     &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
     &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
     &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
@@ -81,28 +98,18 @@
     &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/skarp/git/Teste2&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
-  <component name="RunManager" selected="JUnit.Tests.testDoc">
-    <configuration name="Tests.testAddAndRemoveElementsFromElement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.Tests.XMLGeneratorTest">
+    <configuration name="Tests.XMLGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ProjectPA" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="Tests" />
-      <option name="METHOD_NAME" value="testAddAndRemoveElementsFromElement" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Tests.testAddRemoveAndAlterAttributesFromElement" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="ProjectPA" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="Tests" />
-      <option name="METHOD_NAME" value="testAddRemoveAndAlterAttributesFromElement" />
+      <option name="METHOD_NAME" value="XMLGeneratorTest" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -128,6 +135,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="ClassToXMLKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="ClassToXMLKt" />
+      <module name="ProjectPA" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Teste2Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Teste2Kt" />
       <module name="ProjectPA" />
@@ -137,11 +151,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.Tests.testDoc" />
+        <item itemvalue="JUnit.Tests.XMLGeneratorTest" />
+        <item itemvalue="Kotlin.ClassToXMLKt" />
         <item itemvalue="Kotlin.Teste2Kt" />
         <item itemvalue="JUnit.Tests.testElementCreation" />
-        <item itemvalue="JUnit.Tests.testAddRemoveAndAlterAttributesFromElement" />
-        <item itemvalue="JUnit.Tests.testAddAndRemoveElementsFromElement" />
+        <item itemvalue="JUnit.Tests.testDoc" />
       </list>
     </recent_temporary>
   </component>
@@ -186,7 +200,23 @@
       <option name="project" value="LOCAL" />
       <updated>1713351466394</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Alterado o pretty print.">
+      <option name="closed" value="true" />
+      <created>1714610568790</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1714610568790</updated>
+    </task>
+    <task id="LOCAL-00005" summary="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt">
+      <option name="closed" value="true" />
+      <created>1715216963416</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1715216963416</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -194,17 +224,32 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Criação do projecto, das classes XML.kt e Element.kt" />
     <MESSAGE value="Feito 1. a 4., falta escrita em ficheiro." />
     <MESSAGE value="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?)." />
-    <option name="LAST_COMMIT_MESSAGE" value="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?)." />
+    <MESSAGE value="Alterado o pretty print." />
+    <MESSAGE value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt" />
+    <option name="LAST_COMMIT_MESSAGE" value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ProjectPA$Unnamed.ic" NAME="Unnamed Coverage Results" MODIFIED="1713179847930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />

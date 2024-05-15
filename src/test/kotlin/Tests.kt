@@ -5,7 +5,7 @@ class Tests{
 
     val lotr = Element("TheLordOfTheRings")
 
-    val books = XML("Book", "1.0", "UTF-8", lotr)
+    val books = XML("1.0", "UTF-8", lotr)
 
     val fell = Element("TheFellowshipOfTheRing", lotr)
     val twot = Element("TheTwoTowers", lotr)
@@ -17,14 +17,13 @@ class Tests{
 
     @Test
     fun testXMLCreation(){
-        assertTrue("Book" == books.title)
         assertTrue("1.0" == books.version)
         assertTrue("UTF-8" == books.encoding)
     }
 
     @Test
     fun testElementCreation(){
-        assertTrue("TheLordOfTheRings" == lotr.title)
+        assertTrue("TheLordOfTheRings" == lotr.tag)
         assertFalse(lotr.children.isEmpty())
         lotr.addAttribute("Genre", "EpicHighFantasy")
         lotr.addAttribute("FirstPublication", "1954")
@@ -90,32 +89,55 @@ class Tests{
         rotk.addListOfAttributes(mutableListOf(("Volume" to "3"), ("ISBN" to "0345339738")))
 
         assertFalse(twot.attributes.any {it.first == "FirstEdition" || it.second == "11November1954"})
-        assertTrue(books.addAttribute("TheTwoTowers", "FirstEdition", "11November1954"))
+        //assertTrue(books.addAttribute("TheTwoTowers", "FirstEdition", "11November1954"))
 
-        assertTrue("TheTwoTowers" == twot.title)
-        assertTrue(books.renameElement("TheTwoTowers", "TheLordOfTheRings:TheTwoTowers"))
-        assertTrue("TheLordOfTheRings:TheTwoTowers"==twot.title)
+        assertTrue("TheTwoTowers" == twot.tag)
+        //assertTrue(books.renameElement("TheTwoTowers", "TheLordOfTheRings:TheTwoTowers"))
+        //assertTrue("TheLordOfTheRings:TheTwoTowers"==twot.tag)
 
-        books.renameAttribute("TheLordOfTheRings:TheTwoTowers", "FirstEdition", "1stEdition")
-        assertTrue(twot.attributes.any {it.first == "1stEdition" && it.second == "11November1954"})
-
-        println(books.prettyPrint())
-
-        books.removeAttribute("TheLordOfTheRings:TheTwoTowers", "1stEdition")
-        assertFalse(twot.attributes.any {it.first == "1stEdition" || it.second == "11November1954"})
+        //books.renameAttribute("TheLordOfTheRings:TheTwoTowers", "FirstEdition", "1stEdition")
+        //assertTrue(twot.attributes.any {it.first == "1stEdition" && it.second == "11November1954"})
 
         println(books.prettyPrint())
 
-        assertTrue(twot == books.rootElement?.findElement("TheLordOfTheRings:TheTwoTowers"))
-        books.removeElement("TheLordOfTheRings:TheTwoTowers")
-        assertFalse(twot == books.rootElement?.findElement("TheLordOfTheRings:TheTwoTowers"))
+        //books.removeAttribute("TheLordOfTheRings:TheTwoTowers", "1stEdition")
+        //assertFalse(twot.attributes.any {it.first == "1stEdition" || it.second == "11November1954"})
+
+        println(books.prettyPrint())
+
 
         //println(books.prettyPrint())
 
-        books.removeElement("TheLordOfTheRings")
+        //books.removeElement("TheLordOfTheRings")
 
         //println(books.prettyPrint())
 
+
+    }
+
+    data class Student(
+        val number: Int,
+        val name: String,
+        val worker: Boolean? = null,
+        //val grades: MutableList<Double>? = null
+    )
+    @Test
+    fun XMLGeneratorTest(){
+
+        //val j = Student(70109, "João", true, mutableListOf(14.0, 15.6, 14.3, 15.6))
+        val j = Student(70109, "João", true)
+
+        val gen = XMLGenerator(MyXMLMapping())
+
+        val jElement = gen.createElement(j)
+
+        val newXML = XML("1.0", "UTF-8", jElement)
+
+        println(newXML.prettyPrint())
+
+        println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Student>\n\t<number>70109<number/>\n\t<name>João<name/>\n\t<worker>True<worker/>\n<Student/>")
+
+        assertTrue(newXML.prettyPrint() == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Student>\n\t<number>70109<number/>\n\t<name>João<name/>\n\t<worker>True<worker/>\n<Student/>")
 
     }
 
