@@ -115,29 +115,30 @@ class Tests{
 
     }
 
+    //data class Student(
+      //  val number: Int,
+      //  val name: String,
+      //  val worker: Boolean? = null,
+      //  val grades: MutableList<Double>? = null
+    //)
     data class Student(
-        val number: Int,
-        val name: String,
-        val worker: Boolean? = null,
-        val grades: MutableList<Double>? = null
+
+        @XmlName("Num") val number: Int,
+        @XmlName("Nome") val name: String,
+        @XmlAttribute val worker: Boolean? = null,
+        @XmlIgnore val grades: MutableList<Double>? = null
     )
+
+
     @Test
-    fun XMLGeneratorTest(){
+    fun xMLGeneratorTest(){
 
         val j = Student(70109, "João", true, mutableListOf(14.0, 15.6, 14.3, 15.6))
-        //val j = Student(70109, "João", true)
-
         val gen = XMLGenerator(MyXMLMapping())
-
         val jElement = gen.createElement(j)
-
         val newXML = XML("1.0", "UTF-8", jElement)
-
         println(newXML.prettyPrint())
 
-        //println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Student>\n\t<number>70109</number>\n\t<name>'João'</name>\n\t<worker>'TRUE'</worker>\n</Student>")
-
-        //assertTrue(newXML.prettyPrint() == "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Student>\n\t<number>70109</number>\n\t<name>'João'</name>\n\t<worker>'TRUE'</worker>\n</Student>")
 
     }
 
