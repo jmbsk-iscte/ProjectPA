@@ -25,19 +25,21 @@ interface TypeMapping {
 }
 
 class MyXMLMapping : TypeMapping {
-    override fun mapObject(o: Any?) =
+    override fun mapObject(o: Any?): String =
         when (o) {
             is Int -> o.toString()
             is Double -> o.toString()
-            is String -> "'$o'"
-            is Boolean -> "'$o'".uppercase()
-            null -> "NULL"
-            else -> TODO()
+            is String -> "$o"
+            is Boolean -> "$o".uppercase()
+            is Pair <*, *> -> mapObject(o.second)
+            null -> "null"
+            else -> "Nada"
         }
 
-    override fun mapSet(o: Any?) =
+
+    override fun mapSet(o: Any?): Pair<String, String> =
         when(o) {
-            is Pair<*,*> -> mapObject(o.first) to mapObject(o.second)
+            is Map<*, *> -> mapObject(o[0]) to mapObject(o[1])
             else -> o!!::class.simpleName.toString() to mapObject(o)
         }
 
@@ -55,24 +57,36 @@ class XMLGenerator(val typeMapping: TypeMapping) {
 
             if (property.findAnnotation<XmlAttribute>() != null) {
                 element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
-            } else {
-                if (propertyValue is Collection<*>) {
+            } else if (propertyValue is Collection<*>) {
                     val list = Element(propertyName, element)
                     propertyValue.forEach {
-                        val itemProperty = typeMapping.mapSet(it)
-                        list.addAttribute(itemProperty.first, itemProperty.second)
+                        if (it is Collection<*>) {
+                            createElementChild(it, list)
+                        } else {
+                            val itemProperty = typeMapping.mapSet(it)
+                            list.addAttribute(itemProperty.first, itemProperty.second)
+                        }
                     }
-                    element.addChild(list)
-                } else {
-                    val childElement = Element(propertyName, element)
-                    childElement.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
-                    element.addChild(childElement)
-                }
+            } else {
+                element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
+
             }
         }
         return element
     }
-}
+
+    private fun createElementChild(child: Collection<*>, father: Element) {
+        val childElement = Element(child::class.simpleName!!, father)
+        child.forEach{ property->
+            if (property is List<*>) {
+                createElementChild(property, childElement)
+            } else {
+                val itemProperty = typeMapping.mapSet(property)
+                childElement.addAttribute(itemProperty.first, itemProperty.second)
+
+            }
+        }
+    }
 
 
     val KClass<*>.dataClassFields: List<KProperty<*>>
@@ -81,5 +95,6 @@ class XMLGenerator(val typeMapping: TypeMapping) {
                 declaredMemberProperties.find { it.name == p.name }!!
             }
         }
+}
 
 
