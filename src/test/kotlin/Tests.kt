@@ -114,38 +114,45 @@ class Tests{
 
 
     }
-
-    //data class Student(
-      //  val number: Int,
-      //  val name: String,
-      //  val worker: Boolean? = null,
-      //  val grades: MutableList<Double>? = null
-    //)
+    /* Teste sem anotações
+    data class Student(
+         val number: Int,
+         val name: String,
+         val worker: Boolean? = null,
+         val grades: MutableList<Double>? = null
+     )*/
     data class Student(
 
         @XmlName("Num") val number: Int,
         @XmlName("Nome") val name: String,
         @XmlAttribute val worker: Boolean? = null,
-        @XmlIgnore val grades: MutableList<Double>? = null
+        @XmlName("Notas") val grades: MutableList<*>? = null,
+        @XmlName("Turma")val turma: Pair<String, Int>
     )
 
 
     @Test
     fun xMLGeneratorTest(){
 
-        val j = Student(70109, "João", true, mutableListOf(14.0, 15.6, 14.3, 15.6))
+        val j = Student(70109, "João", grades =  mutableListOf(14.0, 15.6, 14.3, 15.6, mutableListOf(1, 2, 3, 4, 5)), turma= "Turma" to 5)
+        val p = Student(123454, "Pedro", grades =  mutableListOf(13.0, 15.4, 9.5, 20, mutableListOf(20, 5, 6, 1)), turma= "Turma" to 1)
+
         val gen = XMLGenerator(MyXMLMapping())
+
+        val studentsXML = Element("Students")
+
         val jElement = gen.createElement(j)
-        val newXML = XML("1.0", "UTF-8", jElement)
+        val pElement = gen.createElement(p)
+
+        studentsXML.addChild(jElement)
+        studentsXML.addChild(pElement)
+
+
+        val newXML = XML("1.0", "UTF-8", studentsXML)
+
         println(newXML.prettyPrint())
 
 
     }
-
-
-
-
-
-
 
 }
