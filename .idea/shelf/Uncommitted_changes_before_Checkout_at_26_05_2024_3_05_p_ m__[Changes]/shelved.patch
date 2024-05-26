@@ -1,0 +1,557 @@
+Index: src/test/kotlin/Tests.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import org.junit.jupiter.api.Assertions.*\r\nimport org.junit.jupiter.api.Test\r\n\r\nclass Tests{\r\n\r\n    val lotr = Element(\"TheLordOfTheRings\")\r\n\r\n    val books = XML(\"1.0\", \"UTF-8\", lotr)\r\n\r\n    val fell = Element(\"TheFellowshipOfTheRing\", lotr)\r\n    val twot = Element(\"TheTwoTowers\", lotr)\r\n    val rotk = Element(\"TheReturnOfTheKing\", lotr)\r\n\r\n    val fellMovie = Element(\"TheLordOfTheRings:TheFellowshipOfTheRing\")\r\n\r\n\r\n\r\n    @Test\r\n    fun testXMLCreation(){\r\n        assertTrue(\"1.0\" == books.version)\r\n        assertTrue(\"UTF-8\" == books.encoding)\r\n    }\r\n\r\n    @Test\r\n    fun testElementCreation(){\r\n        assertTrue(\"TheLordOfTheRings\" == lotr.tag)\r\n        assertFalse(lotr.children.isEmpty())\r\n        lotr.addAttribute(\"Genre\", \"EpicHighFantasy\")\r\n        lotr.addAttribute(\"FirstPublication\", \"1954\")\r\n        assertTrue((\"Genre\" to \"EpicHighFantasy\") == lotr.attributes[0])\r\n        assertFalse((\"Genre\" to \"EpicHighFantasy\") == lotr.attributes[1])\r\n        assertTrue((\"FirstPublication\" to \"1954\") == lotr.attributes[1])\r\n        assertTrue(lotr.children.contains(twot))\r\n    }\r\n\r\n    @Test\r\n    fun testAddAndRemoveElementsFromElement(){\r\n        assertTrue(lotr.children.contains(rotk))\r\n        lotr.removeChild(rotk)\r\n        assertFalse(lotr.children.contains(rotk))\r\n        lotr.addChild(rotk)\r\n        assertTrue(lotr.children.contains(rotk))\r\n    }\r\n\r\n    @Test\r\n    fun testAddRemoveAndAlterAttributesFromElement(){\r\n        lotr.addAttribute(\"Genre\", \"EpicHighFantasy\")\r\n        lotr.addAttribute(\"FirstPublication\", \"1954\")\r\n\r\n        assertTrue(\"FirstPublication\" == lotr.attributes[1].first)\r\n\r\n        fell.addListOfAttributes(mutableListOf((\"ISBN\" to \"0618002227\"), (\"Volume\" to \"2\")))\r\n\r\n        assertTrue(fell.attributes.any {it.first == \"ISBN\" && it.second == \"0618002227\"})\r\n\r\n        fell.removeAttribute(\"ISBN\")\r\n\r\n        assertFalse(fell.attributes.any {it.first == \"ISBN\" || it.second == \"0618002227\"})\r\n\r\n        assertTrue(\"2\" == fell.attributes[0].second)\r\n\r\n        fell.alterAttributeContent(\"Volume\", \"1\")\r\n\r\n        assertTrue(\"1\" == fell.attributes[0].second)\r\n    }\r\n\r\n    @Test\r\n    fun testGettingChildAndParent(){\r\n        assertTrue(lotr.children.containsAll(listOf(fell, twot, rotk)))\r\n        assertTrue(lotr == fell.parent)\r\n    }\r\n\r\n    @Test\r\n    fun testPrettyPrint(){\r\n        lotr.addAttribute(\"Genre\", \"EpicHighFantasy\")\r\n        lotr.addAttribute(\"FirstPublication\", \"1954\")\r\n        fell.addListOfAttributes(mutableListOf((\"ISBN\" to \"0618002227\"), (\"Volume\" to \"1\")))\r\n        twot.addListOfAttributes(mutableListOf((\"Volume\" to \"2\"), (\"ISBN\" to \"0008376077\")))\r\n        rotk.addListOfAttributes(mutableListOf((\"Volume\" to \"3\"), (\"ISBN\" to \"0345339738\")))\r\n        fellMovie.addListOfAttributes(mutableListOf((\"Year\" to \"2001\"), (\"Running time\" to \"178 minutes\")))\r\n        fell.addChild(fellMovie)\r\n        println(books.prettyPrint())\r\n    }\r\n\r\n    @Test\r\n    fun testDoc(){\r\n        fell.addListOfAttributes(mutableListOf((\"ISBN\" to \"0618002227\"), (\"Volume\" to \"1\")))\r\n        twot.addListOfAttributes(mutableListOf((\"Volume\" to \"2\"), (\"ISBN\" to \"0008376077\")))\r\n        rotk.addListOfAttributes(mutableListOf((\"Volume\" to \"3\"), (\"ISBN\" to \"0345339738\")))\r\n\r\n        assertFalse(twot.attributes.any {it.first == \"FirstEdition\" || it.second == \"11November1954\"})\r\n        //assertTrue(books.addAttribute(\"TheTwoTowers\", \"FirstEdition\", \"11November1954\"))\r\n\r\n        assertTrue(\"TheTwoTowers\" == twot.tag)\r\n        //assertTrue(books.renameElement(\"TheTwoTowers\", \"TheLordOfTheRings:TheTwoTowers\"))\r\n        //assertTrue(\"TheLordOfTheRings:TheTwoTowers\"==twot.tag)\r\n\r\n        //books.renameAttribute(\"TheLordOfTheRings:TheTwoTowers\", \"FirstEdition\", \"1stEdition\")\r\n        //assertTrue(twot.attributes.any {it.first == \"1stEdition\" && it.second == \"11November1954\"})\r\n\r\n        println(books.prettyPrint())\r\n\r\n        //books.removeAttribute(\"TheLordOfTheRings:TheTwoTowers\", \"1stEdition\")\r\n        //assertFalse(twot.attributes.any {it.first == \"1stEdition\" || it.second == \"11November1954\"})\r\n\r\n        println(books.prettyPrint())\r\n\r\n\r\n        //println(books.prettyPrint())\r\n\r\n        //books.removeElement(\"TheLordOfTheRings\")\r\n\r\n        //println(books.prettyPrint())\r\n\r\n\r\n    }\r\n\r\n    //data class Student(\r\n      //  val number: Int,\r\n      //  val name: String,\r\n      //  val worker: Boolean? = null,\r\n      //  val grades: MutableList<Double>? = null\r\n    //)\r\n    data class Student(\r\n\r\n        @XmlName(\"Num\") val number: Int,\r\n        @XmlName(\"Nome\") val name: String,\r\n        @XmlAttribute val worker: Boolean? = null,\r\n        @XmlIgnore val grades: MutableList<Double>? = null\r\n    )\r\n\r\n\r\n    @Test\r\n    fun xMLGeneratorTest(){\r\n\r\n        val j = Student(70109, \"João\", true, mutableListOf(14.0, 15.6, 14.3, 15.6))\r\n        val gen = XMLGenerator(MyXMLMapping())\r\n        val jElement = gen.createElement(j)\r\n        val newXML = XML(\"1.0\", \"UTF-8\", jElement)\r\n        println(newXML.prettyPrint())\r\n\r\n\r\n    }\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/test/kotlin/Tests.kt b/src/test/kotlin/Tests.kt
+--- a/src/test/kotlin/Tests.kt	
++++ b/src/test/kotlin/Tests.kt	
+@@ -133,13 +133,19 @@
+     @Test
+     fun xMLGeneratorTest(){
+ 
++//        val j = Student(70109, "João", true, mutableListOf(14.0, 15.6, 14.3, 15.6))
++//        val gen = XMLGenerator(MyXMLMapping())
++//        val jElement = gen.createElement(j)
++//        val newXML = XML("1.0", "UTF-8", jElement)
++//        println(newXML.prettyPrint())
++
+         val j = Student(70109, "João", true, mutableListOf(14.0, 15.6, 14.3, 15.6))
+-        val gen = XMLGenerator(MyXMLMapping())
+-        val jElement = gen.createElement(j)
+-        val newXML = XML("1.0", "UTF-8", jElement)
+-        println(newXML.prettyPrint())
+ 
++        val xmlDocument = xml("1.0", "UTF-8") {
++            fromObject(j, MyXMLMapping())
++        }
+ 
++        println(xmlDocument.prettyPrint())
+     }
+ 
+ 
+Index: src/main/kotlin/ClassToXML.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\r\nimport kotlin.reflect.KClass\r\nimport kotlin.reflect.KProperty\r\nimport kotlin.reflect.KType\r\nimport kotlin.reflect.full.declaredMemberProperties\r\nimport kotlin.reflect.full.findAnnotation\r\nimport kotlin.reflect.full.primaryConstructor\r\n\r\n//Definicion de anotaciones\r\n@Target(AnnotationTarget.PROPERTY)\r\n@Retention(AnnotationRetention.RUNTIME)\r\nannotation class XmlName(val name: String)\r\n\r\n@Target(AnnotationTarget.PROPERTY)\r\n@Retention(AnnotationRetention.RUNTIME)\r\nannotation class XmlAttribute\r\n\r\n@Target(AnnotationTarget.PROPERTY)\r\n@Retention(AnnotationRetention.RUNTIME)\r\nannotation class XmlIgnore\r\n\r\ninterface TypeMapping {\r\n    fun mapObject(o: Any?): String\r\n    fun mapSet(o: Any?): Pair<String, String>\r\n}\r\n\r\nclass MyXMLMapping : TypeMapping {\r\n    override fun mapObject(o: Any?) =\r\n        when (o) {\r\n            is Int -> o.toString()\r\n            is Double -> o.toString()\r\n            is String -> \"'$o'\"\r\n            is Boolean -> \"'$o'\".uppercase()\r\n            null -> \"NULL\"\r\n            else -> TODO()\r\n        }\r\n\r\n    override fun mapSet(o: Any?) =\r\n        when(o) {\r\n            is Pair<*,*> -> mapObject(o.first) to mapObject(o.second)\r\n            else -> o!!::class.simpleName.toString() to mapObject(o)\r\n        }\r\n\r\n}\r\n\r\n\r\nclass XMLGenerator(val typeMapping: TypeMapping) {\r\n    fun createElement(obj: Any): Element {\r\n        val element = Element(obj::class.simpleName!!)\r\n        obj::class.dataClassFields.forEach { property ->\r\n            if (property.findAnnotation<XmlIgnore>() != null) return@forEach\r\n\r\n            val propertyName = property.findAnnotation<XmlName>()?.name ?: property.name\r\n            val propertyValue = property.getter.call(obj)\r\n\r\n            if (property.findAnnotation<XmlAttribute>() != null) {\r\n                element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))\r\n            } else {\r\n                if (propertyValue is Collection<*>) {\r\n                    val list = Element(propertyName, element)\r\n                    propertyValue.forEach {\r\n                        val itemProperty = typeMapping.mapSet(it)\r\n                        list.addAttribute(itemProperty.first, itemProperty.second)\r\n                    }\r\n                    element.addChild(list)\r\n                } else {\r\n                    val childElement = Element(propertyName, element)\r\n                    childElement.addAttribute(propertyName, typeMapping.mapObject(propertyValue))\r\n                    element.addChild(childElement)\r\n                }\r\n            }\r\n        }\r\n        return element\r\n    }\r\n}\r\n\r\n\r\n    val KClass<*>.dataClassFields: List<KProperty<*>>\r\n        get() {\r\n            return primaryConstructor!!.parameters.map { p ->\r\n                declaredMemberProperties.find { it.name == p.name }!!\r\n            }\r\n        }\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/kotlin/ClassToXML.kt b/src/main/kotlin/ClassToXML.kt
+--- a/src/main/kotlin/ClassToXML.kt	
++++ b/src/main/kotlin/ClassToXML.kt	
+@@ -25,61 +25,104 @@
+ }
+ 
+ class MyXMLMapping : TypeMapping {
++//    override fun mapObject(o: Any?) =
++//        when (o) {
++//            is Int -> o.toString()
++//            is Double -> o.toString()
++//            is String -> "'$o'"
++//            is Boolean -> "'$o'".uppercase()
++//            null -> "NULL"
++//            else -> TODO()
++//        }
+     override fun mapObject(o: Any?) =
+         when (o) {
+             is Int -> o.toString()
+             is Double -> o.toString()
+             is String -> "'$o'"
+-            is Boolean -> "'$o'".uppercase()
+-            null -> "NULL"
+-            else -> TODO()
++            is Boolean -> if (o) "true" else "false"
++            else -> o.toString()
+         }
+ 
+-    override fun mapSet(o: Any?) =
+-        when(o) {
+-            is Pair<*,*> -> mapObject(o.first) to mapObject(o.second)
+-            else -> o!!::class.simpleName.toString() to mapObject(o)
+-        }
++//    override fun mapSet(o: Any?) =
++//        when(o) {
++//            is Pair<*,*> -> mapObject(o.first) to mapObject(o.second)
++//            else -> o!!::class.simpleName.toString() to mapObject(o)
++//        }
++
++    override fun mapSet(o: Any?): Pair<String, String> {
++        val id = (1..1000).random()
++        val p = o.toString()
++        return (id.toString() to p)
++    }
+ 
+ }
+ 
+ 
+-class XMLGenerator(val typeMapping: TypeMapping) {
++//class XMLGenerator(val typeMapping: TypeMapping) {
++//    fun createElement(obj: Any): Element {
++//        val element = Element(obj::class.simpleName!!)
++//        obj::class.dataClassFields.forEach { property ->
++//            if (property.findAnnotation<XmlIgnore>() != null) return@forEach
++//
++//            val propertyName = property.findAnnotation<XmlName>()?.name ?: property.name
++//            val propertyValue = property.getter.call(obj)
++//
++//            if (property.findAnnotation<XmlAttribute>() != null) {
++//                element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
++//            } else {
++//                if (propertyValue is Collection<*>) {
++//                    val list = Element(propertyName, element)
++//                    propertyValue.forEach {
++//                        val itemProperty = typeMapping.mapSet(it)
++//                        list.addAttribute(itemProperty.first, itemProperty.second)
++//                    }
++//                    element.addChild(list)
++//                } else {
++//                    val childElement = Element(propertyName, element)
++//                    childElement.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
++//                    element.addChild(childElement)
++//                }
++//            }
++//        }
++//        return element
++//    }
++//}
++
++
++//    val KClass<*>.dataClassFields: List<KProperty<*>>
++//        get() {
++//            return primaryConstructor!!.parameters.map { p ->
++//                declaredMemberProperties.find { it.name == p.name }!!
++//            }
++//        }
++
++
++class XMLGenerator(private val mapping: TypeMapping) {
+     fun createElement(obj: Any): Element {
+-        val element = Element(obj::class.simpleName!!)
+-        obj::class.dataClassFields.forEach { property ->
+-            if (property.findAnnotation<XmlIgnore>() != null) return@forEach
++        val kClass: KClass<Any> = obj::class as KClass<Any>
++        val element = Element(kClass.simpleName.toString())
+ 
+-            val propertyName = property.findAnnotation<XmlName>()?.name ?: property.name
+-            val propertyValue = property.getter.call(obj)
++        for (property in kClass.declaredMemberProperties) {
++            val value = property.call(obj) ?: continue
++            val xmlName = property.findAnnotation<XmlName>()?.name ?: property.name
+ 
+-            if (property.findAnnotation<XmlAttribute>() != null) {
+-                element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
+-            } else {
+-                if (propertyValue is Collection<*>) {
+-                    val list = Element(propertyName, element)
+-                    propertyValue.forEach {
+-                        val itemProperty = typeMapping.mapSet(it)
+-                        list.addAttribute(itemProperty.first, itemProperty.second)
++            when {
++                property.findAnnotation<XmlIgnore>() != null -> continue
++                property.findAnnotation<XmlAttribute>() != null -> {
++                    element.addAttribute(xmlName, mapping.mapObject(value))
++                }
++                value is Collection<*> -> {
++                    for (elementValue in value) {
++                        val childElement = createElement(elementValue as Any)
++                        element.addChild(childElement)
+                     }
+-                    element.addChild(list)
+-                } else {
+-                    val childElement = Element(propertyName, element)
+-                    childElement.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
++                }
++                else -> {
++                    val childElement = createElement(value)
+                     element.addChild(childElement)
+                 }
+             }
+         }
+         return element
+     }
+-}
+-
+-
+-    val KClass<*>.dataClassFields: List<KProperty<*>>
+-        get() {
+-            return primaryConstructor!!.parameters.map { p ->
+-                declaredMemberProperties.find { it.name == p.name }!!
+-            }
+-        }
+-
+-
++}
+\ No newline at end of file
+Index: src/main/kotlin/Element.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>data class Element(\r\n    var tag: String,\r\n    var parent: Element? = null,\r\n){\r\n    var children: MutableList<Element> = mutableListOf()\r\n    var attributes: MutableList<Pair<String, String>> = mutableListOf()\r\n    init {\r\n        parent?.children?.add(this)\r\n    }\r\n\r\n    fun addChild(child: Element){\r\n        children.add(child)\r\n        child.parent = this\r\n    }\r\n\r\n    fun removeChild(child: Element){\r\n        children.remove(child)\r\n        if(child.parent == this) child.parent = null\r\n    }\r\n\r\n    fun addAttribute(attributeName: String, content: String){\r\n        attributes.add(attributeName to content)\r\n    }\r\n\r\n    fun addListOfAttributes(attributesToAdd: List<Pair<String, String>>){\r\n        attributes.addAll(attributesToAdd)\r\n    }\r\n\r\n    fun removeAttribute(attributeName: String): Boolean{\r\n        val i = attributes.indexOfFirst { it.first == attributeName }\r\n        return if (i != -1) {\r\n            attributes.removeAt(i)\r\n            true\r\n        } else false\r\n    }\r\n\r\n    fun renameAttribute(attributeName: String, newName: String): Boolean{\r\n        val i = attributes.indexOfFirst { it.first == attributeName }\r\n        return if (i != -1) {\r\n            attributes[i] = Pair(newName, attributes[i].second)\r\n            true\r\n        } else false\r\n    }\r\n\r\n    fun alterAttributeContent(attributeName: String, newContent: String): Boolean{\r\n        val i = attributes.indexOfFirst { it.first == attributeName }\r\n        return if (i != -1) {\r\n            attributes[i]=(attributeName to newContent)\r\n            true\r\n        } else false\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/kotlin/Element.kt b/src/main/kotlin/Element.kt
+--- a/src/main/kotlin/Element.kt	
++++ b/src/main/kotlin/Element.kt	
+@@ -1,7 +1,9 @@
+ data class Element(
+     var tag: String,
+     var parent: Element? = null,
++
+ ){
++
+     var children: MutableList<Element> = mutableListOf()
+     var attributes: MutableList<Pair<String, String>> = mutableListOf()
+     init {
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"f0476d3c-0031-49f0-af1e-f47cc3b5698c\" name=\"Changes\" comment=\"+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt\">\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/libraries/jetbrains_kotlin_reflect.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_24__Changes_.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_24__Changes_.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_04_2024_12_18__Changes_.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_04_2024_12_18__Changes_.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/TextFile\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/TextFile\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/main/kotlin/XML.kt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/main/kotlin/XML.kt\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/src/test/kotlin/Tests.kt\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/src/test/kotlin/Tests.kt\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Kotlin Script\" />\r\n        <option value=\"Kotlin File\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\r\n      <map>\r\n        <entry key=\"$PROJECT_DIR$\" value=\"master\" />\r\n      </map>\r\n    </option>\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;jmbsk-iscte&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">\r\n    <option name=\"selectedUrlAndAccountId\">\r\n      <UrlAndAccount>\r\n        <option name=\"accountId\" value=\"65b9e287-5b0a-47df-bb9b-f5a994a10879\" />\r\n        <option name=\"url\" value=\"https://github.com/jmbsk-iscte/ProjectPA\" />\r\n      </UrlAndAccount>\r\n    </option>\r\n  </component>\r\n  <component name=\"HighlightingSettingsPerFile\">\r\n    <setting file=\"file://$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt\" root0=\"FORCE_HIGHLIGHTING\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 0\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2ey3VI0Tzy8BjQY3FxiVk6uWiOg\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,\r\n    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,\r\n    &quot;JUnit.Tests.XMLGeneratorTest.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.test.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddAndRemoveElementsFromElement.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddAndRemoveFromElement.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddAttributeDoc.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testAddRemoveAndAlterAttributesFromElement.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testDoc.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testElementCreation.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testGettingChildAndParent.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testPrettyPrint.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.testXMLCreation.executor&quot;: &quot;Run&quot;,\r\n    &quot;JUnit.Tests.tests.executor&quot;: &quot;Run&quot;,\r\n    &quot;Kotlin script (Beta).Unnamed.executor&quot;: &quot;Coverage&quot;,\r\n    &quot;Kotlin.ClassToXMLKt.executor&quot;: &quot;Run&quot;,\r\n    &quot;Kotlin.Teste2Kt.executor&quot;: &quot;Run&quot;,\r\n    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,\r\n    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,\r\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;Camila&quot;,\r\n    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,\r\n    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;C:/Users/skarp/git/Teste2&quot;,\r\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\r\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\r\n    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,\r\n    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,\r\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RunManager\" selected=\"JUnit.Tests.XMLGeneratorTest\">\r\n    <configuration name=\"Tests.XMLGeneratorTest\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"XMLGeneratorTest\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Tests.testDoc\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"testDoc\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Tests.testElementCreation\" type=\"JUnit\" factoryName=\"JUnit\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <module name=\"ProjectPA\" />\r\n      <option name=\"PACKAGE_NAME\" value=\"\" />\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Tests\" />\r\n      <option name=\"METHOD_NAME\" value=\"testElementCreation\" />\r\n      <option name=\"TEST_OBJECT\" value=\"method\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"ClassToXMLKt\" type=\"JetRunConfigurationType\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"ClassToXMLKt\" />\r\n      <module name=\"ProjectPA\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"Teste2Kt\" type=\"JetRunConfigurationType\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Teste2Kt\" />\r\n      <module name=\"ProjectPA\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"JUnit.Tests.XMLGeneratorTest\" />\r\n        <item itemvalue=\"Kotlin.Teste2Kt\" />\r\n        <item itemvalue=\"Kotlin.ClassToXMLKt\" />\r\n        <item itemvalue=\"JUnit.Tests.testElementCreation\" />\r\n        <item itemvalue=\"JUnit.Tests.testDoc\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"jdk-21.0.2-corretto-21.0.2-4caba194b151-51586f01\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"f0476d3c-0031-49f0-af1e-f47cc3b5698c\" name=\"Changes\" comment=\"\" />\r\n      <created>1712863013596</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1712863013596</updated>\r\n      <workItem from=\"1715800798285\" duration=\"102000\" />\r\n      <workItem from=\"1716042336434\" duration=\"15719000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Criação do projecto, das classes XML.kt e Element.kt\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1712867353129</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1712867353129</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Feito 1. a 4., falta escrita em ficheiro.\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1713304596688</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713304596688</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1713351466394</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1713351466394</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Alterado o pretty print.\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1714610568790</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1714610568790</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1715216963416</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1715216963416</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"6\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State>\r\n              <option name=\"FILTERS\">\r\n                <map>\r\n                  <entry key=\"branch\">\r\n                    <value>\r\n                      <list>\r\n                        <option value=\"master\" />\r\n                      </list>\r\n                    </value>\r\n                  </entry>\r\n                </map>\r\n              </option>\r\n            </State>\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <option name=\"ADD_EXTERNAL_FILES_SILENTLY\" value=\"true\" />\r\n    <MESSAGE value=\"Criação do projecto, das classes XML.kt e Element.kt\" />\r\n    <MESSAGE value=\"Feito 1. a 4., falta escrita em ficheiro.\" />\r\n    <MESSAGE value=\"Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).\" />\r\n    <MESSAGE value=\"Alterado o pretty print.\" />\r\n    <MESSAGE value=\"+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/ProjectPA$Unnamed.ic\" NAME=\"Unnamed Coverage Results\" MODIFIED=\"1713179847930\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"idea\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	
++++ b/.idea/workspace.xml	
+@@ -4,14 +4,16 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt">
+-      <change afterPath="$PROJECT_DIR$/.idea/libraries/jetbrains_kotlin_reflect.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_24__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_02_05_2024_01_24__Changes_.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_04_2024_12_18__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_27_04_2024_12_18__Changes_.xml" afterDir="false" />
++    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt &#10;Anotaciones">
++      <change afterPath="$PROJECT_DIR$/src/main/kotlin/dsl.kt" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_15_05_2024_8_14_p__m___Changes_.xml" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_15_05_2024_8_14_p_ m__[Changes]/shelved.patch" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_rebase_[Changes]/shelved.patch" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_rebase__Changes_.xml" beforeDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/TextFile" beforeDir="false" afterPath="$PROJECT_DIR$/TextFile" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/XML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/XML.kt" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Element.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Element.kt" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+@@ -44,13 +46,16 @@
+   <component name="GithubPullRequestsUISettings">
+     <option name="selectedUrlAndAccountId">
+       <UrlAndAccount>
+-        <option name="accountId" value="65b9e287-5b0a-47df-bb9b-f5a994a10879" />
+-        <option name="url" value="https://github.com/jmbsk-iscte/ProjectPA" />
++        <option name="accountId" value="5cde51bb-931b-4d51-bddf-3b0caf20a8ff" />
++        <option name="url" value="https://github.com/jmbsk-iscte/ProjectPA.git" />
+       </UrlAndAccount>
+     </option>
+   </component>
+   <component name="HighlightingSettingsPerFile">
+     <setting file="file://$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" root0="FORCE_HIGHLIGHTING" />
++  </component>
++  <component name="ProblemsViewState">
++    <option name="selectedTabId" value="ProjectErrors" />
+   </component>
+   <component name="ProjectColorInfo">{
+   &quot;associatedIndex&quot;: 0
+@@ -63,48 +68,49 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent">{
+-  &quot;keyToString&quot;: {
+-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
+-    &quot;JUnit.Tests.XMLGeneratorTest.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.test.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddAndRemoveElementsFromElement.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddAndRemoveFromElement.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddAttributeDoc.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testAddRemoveAndAlterAttributesFromElement.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testDoc.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testElementCreation.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testGettingChildAndParent.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testPrettyPrint.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.testXMLCreation.executor&quot;: &quot;Run&quot;,
+-    &quot;JUnit.Tests.tests.executor&quot;: &quot;Run&quot;,
+-    &quot;Kotlin script (Beta).Unnamed.executor&quot;: &quot;Coverage&quot;,
+-    &quot;Kotlin.ClassToXMLKt.executor&quot;: &quot;Run&quot;,
+-    &quot;Kotlin.Teste2Kt.executor&quot;: &quot;Run&quot;,
+-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
+-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
+-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
+-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+-    &quot;git-widget-placeholder&quot;: &quot;Camila&quot;,
+-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+-    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;21&quot;,
+-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;C:/Users/skarp/git/Teste2&quot;,
+-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;,
+-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
++  <component name="PropertiesComponent"><![CDATA[{
++  "keyToString": {
++    "ASKED_ADD_EXTERNAL_FILES": "true",
++    "Downloaded.Files.Path.Enabled": "false",
++    "JUnit.Tests.XMLGeneratorTest.executor": "Run",
++    "JUnit.Tests.test.executor": "Run",
++    "JUnit.Tests.testAddAndRemoveElementsFromElement.executor": "Run",
++    "JUnit.Tests.testAddAndRemoveFromElement.executor": "Run",
++    "JUnit.Tests.testAddAttributeDoc.executor": "Run",
++    "JUnit.Tests.testAddRemoveAndAlterAttributesFromElement.executor": "Run",
++    "JUnit.Tests.testDoc.executor": "Run",
++    "JUnit.Tests.testElementCreation.executor": "Run",
++    "JUnit.Tests.testGettingChildAndParent.executor": "Run",
++    "JUnit.Tests.testPrettyPrint.executor": "Run",
++    "JUnit.Tests.testXMLCreation.executor": "Run",
++    "JUnit.Tests.tests.executor": "Run",
++    "JUnit.Tests.xMLGeneratorTest.executor": "Run",
++    "Kotlin script (Beta).Unnamed.executor": "Coverage",
++    "Kotlin.ClassToXMLKt.executor": "Run",
++    "Kotlin.Teste2Kt.executor": "Run",
++    "Repository.Attach.Annotations": "false",
++    "Repository.Attach.JavaDocs": "false",
++    "Repository.Attach.Sources": "false",
++    "RunOnceActivity.OpenProjectViewOnStart": "true",
++    "RunOnceActivity.ShowReadmeOnStart": "true",
++    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
++    "git-widget-placeholder": "Camila",
++    "ignore.virus.scanning.warn.message": "true",
++    "jdk.selected.JAVA_MODULE": "21",
++    "kotlin-language-version-configured": "true",
++    "last_opened_file_path": "C:/Users/skarp/git/Teste2",
++    "node.js.detected.package.eslint": "true",
++    "node.js.selected.package.eslint": "(autodetect)",
++    "node.js.selected.package.tslint": "(autodetect)",
++    "nodejs_package_manager_path": "npm",
++    "project.structure.last.edited": "Modules",
++    "project.structure.proportion": "0.15",
++    "project.structure.side.proportion": "0.2",
++    "settings.editor.selected.configurable": "preferences.lookFeel",
++    "vue.rearranger.settings.migration": "true"
+   }
+-}</component>
+-  <component name="RunManager" selected="JUnit.Tests.XMLGeneratorTest">
++}]]></component>
++  <component name="RunManager" selected="JUnit.Tests.xMLGeneratorTest">
+     <configuration name="Tests.XMLGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="ProjectPA" />
+       <option name="PACKAGE_NAME" value="" />
+@@ -115,21 +121,21 @@
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="Tests.testDoc" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="Tests.testElementCreation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="ProjectPA" />
+       <option name="PACKAGE_NAME" value="" />
+       <option name="MAIN_CLASS_NAME" value="Tests" />
+-      <option name="METHOD_NAME" value="testDoc" />
++      <option name="METHOD_NAME" value="testElementCreation" />
+       <option name="TEST_OBJECT" value="method" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+       </method>
+     </configuration>
+-    <configuration name="Tests.testElementCreation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
++    <configuration name="Tests.xMLGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+       <module name="ProjectPA" />
+       <option name="PACKAGE_NAME" value="" />
+       <option name="MAIN_CLASS_NAME" value="Tests" />
+-      <option name="METHOD_NAME" value="testElementCreation" />
++      <option name="METHOD_NAME" value="xMLGeneratorTest" />
+       <option name="TEST_OBJECT" value="method" />
+       <method v="2">
+         <option name="Make" enabled="true" />
+@@ -151,11 +157,11 @@
+     </configuration>
+     <recent_temporary>
+       <list>
++        <item itemvalue="JUnit.Tests.xMLGeneratorTest" />
+         <item itemvalue="JUnit.Tests.XMLGeneratorTest" />
+         <item itemvalue="Kotlin.Teste2Kt" />
+         <item itemvalue="Kotlin.ClassToXMLKt" />
+         <item itemvalue="JUnit.Tests.testElementCreation" />
+-        <item itemvalue="JUnit.Tests.testDoc" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -175,7 +181,8 @@
+       <option name="presentableId" value="Default" />
+       <updated>1712863013596</updated>
+       <workItem from="1715800798285" duration="102000" />
+-      <workItem from="1716042336434" duration="15719000" />
++      <workItem from="1716042336434" duration="16467000" />
++      <workItem from="1716719346866" duration="7770000" />
+     </task>
+     <task id="LOCAL-00001" summary="Criação do projecto, das classes XML.kt e Element.kt">
+       <option name="closed" value="true" />
+@@ -217,13 +224,44 @@
+       <option name="project" value="LOCAL" />
+       <updated>1715216963416</updated>
+     </task>
+-    <option name="localTasksCounter" value="6" />
++    <task id="LOCAL-00006" summary="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt &#10;Anotaciones">
++      <option name="closed" value="true" />
++      <created>1716062771266</created>
++      <option name="number" value="00006" />
++      <option name="presentableId" value="LOCAL-00006" />
++      <option name="project" value="LOCAL" />
++      <updated>1716062771266</updated>
++    </task>
++    <task id="LOCAL-00007" summary="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt &#10;Anotaciones">
++      <option name="closed" value="true" />
++      <created>1716062801882</created>
++      <option name="number" value="00007" />
++      <option name="presentableId" value="LOCAL-00007" />
++      <option name="project" value="LOCAL" />
++      <updated>1716062801882</updated>
++    </task>
++    <option name="localTasksCounter" value="8" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+     <option name="version" value="3" />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
++    <option name="RECENT_FILTERS">
++      <map>
++        <entry key="Branch">
++          <value>
++            <list>
++              <RecentGroup>
++                <option name="FILTER_VALUES">
++                  <option value="Camila" />
++                </option>
++              </RecentGroup>
++            </list>
++          </value>
++        </entry>
++      </map>
++    </option>
+     <option name="TAB_STATES">
+       <map>
+         <entry key="MAIN">
+@@ -234,7 +272,7 @@
+                   <entry key="branch">
+                     <value>
+                       <list>
+-                        <option value="master" />
++                        <option value="Camila" />
+                       </list>
+                     </value>
+                   </entry>
+@@ -253,7 +291,8 @@
+     <MESSAGE value="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?)." />
+     <MESSAGE value="Alterado o pretty print." />
+     <MESSAGE value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt" />
+-    <option name="LAST_COMMIT_MESSAGE" value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt" />
++    <MESSAGE value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt &#10;Anotaciones" />
++    <option name="LAST_COMMIT_MESSAGE" value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt &#10;Anotaciones" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+     <SUITE FILE_PATH="coverage/ProjectPA$Unnamed.ic" NAME="Unnamed Coverage Results" MODIFIED="1713179847930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+Index: src/main/kotlin/dsl.kt
+===================================================================
+diff --git a/src/main/kotlin/dsl.kt b/src/main/kotlin/dsl.kt
+new file mode 100644
+--- /dev/null	
++++ b/src/main/kotlin/dsl.kt	
+@@ -0,0 +1,53 @@
++
++
++class ElementBuilder(val tag: String) {
++    var parent: Element? = null
++    private val children = mutableListOf<Element>()
++    private val attributes = mutableListOf<Pair<String, String>>()
++
++    fun addChild(tag: String, init: ElementBuilder.() -> Unit): Element {
++        val childBuilder = ElementBuilder(tag)
++        childBuilder.init()
++        val child = childBuilder.build()
++        children.add(child)
++        return child
++    }
++
++    fun attribute(name: String, value: String) {
++        attributes.add(name to value)
++    }
++
++    fun build(): Element {
++        val element = Element(tag, parent).apply {
++            children.forEach { addChild(it) }
++            attributes.forEach { addAttribute(it.first, it.second) }
++        }
++        return element
++    }
++}
++
++class XMLBuilder(val version: String, val encoding: String) {
++    var rootElement: Element? = null
++
++    fun root(tag: String, init: ElementBuilder.() -> Unit): Element {
++        val rootBuilder = ElementBuilder(tag)
++        rootBuilder.init()
++        rootElement = rootBuilder.build()
++        return rootElement!!
++    }
++
++    fun build(): XML {
++        return XML(version, encoding, rootElement)
++    }
++
++    fun fromObject(obj: Any, typeMapping: TypeMapping = MyXMLMapping()) {
++        val generator = XMLGenerator(typeMapping)
++        rootElement = generator.createElement(obj)
++    }
++}
++
++fun xml(version: String = "1.0", encoding: String = "UTF-8", init: XMLBuilder.() -> Unit): XML {
++    val builder = XMLBuilder(version, encoding)
++    builder.init()
++    return builder.build()
++}
+Index: TextFile
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<Student>\r\n    <worker>'TRUE'</worker>\r\n    <Numero>\r\n        <Numero>70109</Numero>\r\n    </Numero>\r\n    <Numero>\r\n        <Numero>70109</Numero>\r\n    </Numero>\r\n    <Nome>\r\n        <Nome>'João'</Nome>\r\n    </Nome>\r\n    <Nome>\r\n        <Nome>'João'</Nome>\r\n    </Nome>\r\n</Student>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TextFile b/TextFile
+--- a/TextFile	
++++ b/TextFile	
+@@ -1,16 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <Student>
+-    <worker>'TRUE'</worker>
+-    <Numero>
+-        <Numero>70109</Numero>
+-    </Numero>
+-    <Numero>
+-        <Numero>70109</Numero>
+-    </Numero>
+-    <Nome>
+-        <Nome>'João'</Nome>
+-    </Nome>
+-    <Nome>
+-        <Nome>'João'</Nome>
+-    </Nome>
++    <worker>true</worker>
++    <String>
++        <Int>
++        </Int>
++    </String>
++    <Int>
++    </Int>
+ </Student>

@@ -58,18 +58,17 @@ class XMLGenerator(val typeMapping: TypeMapping) {
             if (property.findAnnotation<XmlAttribute>() != null) {
                 element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
             } else if (propertyValue is Collection<*>) {
-                    val list = Element(propertyName, element)
-                    propertyValue.forEach {
-                        if (it is Collection<*>) {
-                            createElementChild(it, list)
-                        } else {
-                            val itemProperty = typeMapping.mapSet(it)
-                            list.addAttribute(itemProperty.first, itemProperty.second)
-                        }
+                val list = Element(propertyName, element)
+                propertyValue.forEach {
+                    if (it is Collection<*>) {
+                        createElementChild(it, list)
+                    } else {
+                        val itemProperty = typeMapping.mapSet(it)
+                        list.addAttribute(itemProperty.first, itemProperty.second)
                     }
+                }
             } else {
                 element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
-
             }
         }
         return element
@@ -77,13 +76,12 @@ class XMLGenerator(val typeMapping: TypeMapping) {
 
     private fun createElementChild(child: Collection<*>, father: Element) {
         val childElement = Element(child::class.simpleName!!, father)
-        child.forEach{ property->
+        child.forEach { property ->
             if (property is List<*>) {
                 createElementChild(property, childElement)
             } else {
                 val itemProperty = typeMapping.mapSet(property)
                 childElement.addAttribute(itemProperty.first, itemProperty.second)
-
             }
         }
     }
