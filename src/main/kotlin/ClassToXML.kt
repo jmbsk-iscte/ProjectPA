@@ -1,10 +1,10 @@
 
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.KType
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.reflect.jvm.isAccessible
 
 //Definicion de anotaciones
 @Target(AnnotationTarget.PROPERTY)
@@ -19,72 +19,82 @@ annotation class XmlAttribute
 @Retention(AnnotationRetention.RUNTIME)
 annotation class XmlIgnore
 
-interface TypeMapping {
-    fun mapObject(o: Any?): String
-    fun mapSet(o: Any?): Pair<String, String>
-}
+@Target(AnnotationTarget.PROPERTY)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class XmlString
 
+interface TypeMapping {
+    fun mapSimpleTypes(obj: Any?): String
+    fun isSimpleType(obj: Any?): Boolean
+}
 class MyXMLMapping : TypeMapping {
-    override fun mapObject(o: Any?): String =
-        when (o) {
-            is Int -> o.toString()
-            is Double -> o.toString()
-            is String -> "$o"
-            is Boolean -> "$o".uppercase()
-            is Pair <*, *> -> mapObject(o.second)
+    override fun mapSimpleTypes(obj: Any?): String =
+        when (obj) {
+            is Int -> obj.toString()
+            is Double -> obj.toString()
+            is String -> "$obj"
+            is Boolean -> "$obj".uppercase()
             null -> "null"
             else -> "Nada"
         }
 
-
-    override fun mapSet(o: Any?): Pair<String, String> =
-        when(o) {
-            is Map<*, *> -> mapObject(o[0]) to mapObject(o[1])
-            else -> o!!::class.simpleName.toString() to mapObject(o)
+    override fun isSimpleType(obj: Any?): Boolean {
+        return when (obj) {
+            is String, is Number, is Boolean -> true
+            else -> false
         }
-
+    }
 }
 
 
 class XMLGenerator(val typeMapping: TypeMapping) {
     fun createElement(obj: Any): Element {
+
         val element = Element(obj::class.simpleName!!)
         obj::class.dataClassFields.forEach { property ->
+
             if (property.findAnnotation<XmlIgnore>() != null) return@forEach
 
             val propertyName = property.findAnnotation<XmlName>()?.name ?: property.name
+
             val propertyValue = property.getter.call(obj)
 
             if (property.findAnnotation<XmlAttribute>() != null) {
-                element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
-            } else if (propertyValue is Collection<*>) {
-                val list = Element(propertyName, element)
-                propertyValue.forEach {
-                    if (it is Collection<*>) {
-                        createElementChild(it, list)
-                    } else {
-                        val itemProperty = typeMapping.mapSet(it)
-                        list.addAttribute(itemProperty.first, itemProperty.second)
-                    }
+
+                element.addAttribute(propertyName, typeMapping.mapSimpleTypes(propertyValue))
+            }
+            else {
+                if(propertyValue != null) {
+                    createElementChild(propertyValue, propertyName, element)
                 }
-            } else {
-                element.addAttribute(propertyName, typeMapping.mapObject(propertyValue))
             }
         }
         return element
     }
 
-    private fun createElementChild(child: Collection<*>, father: Element) {
-        val childElement = Element(child::class.simpleName!!, father)
-        child.forEach { property ->
-            if (property is List<*>) {
-                createElementChild(property, childElement)
-            } else {
-                val itemProperty = typeMapping.mapSet(property)
-                childElement.addAttribute(itemProperty.first, itemProperty.second)
-            }
-        }
-    }
+
+   private fun createElementChild(propertyValue: Any, propertyName: String, element: Element){
+       when {
+
+           typeMapping.isSimpleType(propertyValue) -> Element(propertyName, element, typeMapping.mapSimpleTypes(propertyValue))
+
+           propertyValue is List < * > -> {
+               val childElement = Element(propertyName, element)
+               propertyValue.forEach {
+                   if (it != null) {
+                       createElementChild(it, it::class.simpleName.toString(), childElement)
+                   }
+               }
+           }
+
+           else -> {
+           val childElement = createElement(propertyValue)
+           childElement.tag = propertyName
+           element.addChild(childElement)
+           }
+       }
+   }
+
 
 
     val KClass<*>.dataClassFields: List<KProperty<*>>
