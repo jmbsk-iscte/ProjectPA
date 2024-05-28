@@ -3,36 +3,63 @@ import org.junit.jupiter.api.Test
 
 class Tests{
 
-    val lotr = Element("TheLordOfTheRings")
+    val books = Element("Books")
+    val xml = XML("1.0", "UTF-8",books)
 
-    val books = XML("1.0", "UTF-8", lotr)
+    var fotr = Element("Book1", books)
+    var t2t = Element("Book2", fotr)
+    var rotk = Element("Book3", t2t, "Return of the King")
 
-    val fell = Element("TheFellowshipOfTheRing", lotr)
-    val twot = Element("TheTwoTowers", lotr)
-    val rotk = Element("TheReturnOfTheKing", lotr)
 
-    val fellMovie = Element("TheLordOfTheRings:TheFellowshipOfTheRing")
 
 
 
     @Test
     fun testXMLCreation(){
-        assertTrue("1.0" == books.version)
-        assertTrue("UTF-8" == books.encoding)
+        assertTrue("1.0" == xml.version)
+        assertTrue("UTF-8" == xml.encoding)
+        assertTrue("Books" == xml.rootElement?.tag)
     }
 
     @Test
     fun testElementCreation(){
-        assertTrue("TheLordOfTheRings" == lotr.tag)
-        assertFalse(lotr.children.isEmpty())
-        lotr.addAttribute("Genre", "EpicHighFantasy")
-        lotr.addAttribute("FirstPublication", "1954")
-        assertTrue(("Genre" to "EpicHighFantasy") == lotr.attributes[0])
-        assertFalse(("Genre" to "EpicHighFantasy") == lotr.attributes[1])
-        assertTrue(("FirstPublication" to "1954") == lotr.attributes[1])
-        assertTrue(lotr.children.contains(twot))
+        fotr.addListOfAttributes(listOf("Title" to "The Fellowship of the Ring", "Volume" to "1"))
+        assertTrue("FotR" == fotr.tag)
+        assertFalse(books.children.isEmpty())
+        assertTrue(fotr.attributes.any{it.first == "Title" && it.second == "The Fellowship of the Ring"})
+        assertFalse(fotr.attributes.any{it.first == "Title" && it.second == "The Two Towers"})
+        assertTrue(books.children.contains(fotr))
     }
 
+    @Test
+    fun testXMLVisitor(){
+        fotr.addListOfAttributes(listOf("Title" to "The Fellowship of the Ring", "Volume" to "1"))
+        t2t.addListOfAttributes(listOf("Title" to "The Two Towers", "Volume" to "2"))
+
+        assertTrue(rotk.content == "Return of the King")
+
+        assertFalse(rotk.addChild(t2t))
+
+        println(xml.prettyPrint())
+
+
+        xml.accept(object: Visitor{
+            override fun visit(xml: Element) {
+                println(xml.tag)
+            }
+
+        })
+
+        xml.accept(XML.RenameElementVisitor("Book", "Livro"))
+
+
+
+        xml.accept(XML.RenameAttributeVisitor("Livro", "Title", "Título"))
+
+        println(xml.prettyPrint())
+
+    }
+    /*
     @Test
     fun testAddAndRemoveElementsFromElement(){
         assertTrue(lotr.children.contains(rotk))
@@ -114,28 +141,38 @@ class Tests{
 
 
     }
-    /* Teste sem anotações
+
+     Teste sem anotações
     data class Student(
          val number: Int,
          val name: String,
          val worker: Boolean? = null,
          val grades: MutableList<Double>? = null
-     )*/
+     )
+
+     */
     data class Student(
 
         @XmlName("Num") val number: Int,
         @XmlName("Nome") val name: String,
-        @XmlAttribute val worker: Boolean? = null,
+        @XmlAttribute val worker: Boolean? = false,
         @XmlName("Notas") val grades: MutableList<*>? = null,
-        @XmlName("Turma")val turma: Pair<String, Int>
+        @XmlName("avaliacao")val avaliacao: List<*>? = null,
+        val componenteAvaliacao: ComponenteAvaliacao? = null
+    )
+
+    data class ComponenteAvaliacao(
+        @XmlAttribute val avaliacao: String,
+        //@XmlString(AddPercentage::class)
+        @XmlAttribute val peso: Int
     )
 
 
     @Test
     fun xMLGeneratorTest(){
 
-        val j = Student(70109, "João", grades =  mutableListOf(14.0, 15.6, 14.3, 15.6, mutableListOf(1, 2, 3, 4, 5)), turma= "Turma" to 5)
-        val p = Student(123454, "Pedro", grades =  mutableListOf(13.0, 15.4, 9.5, 20, mutableListOf(20, 5, 6, 1)), turma= "Turma" to 1)
+        val j = Student(70109, "João", true, grades =  mutableListOf(14.0, 15.6, 14.3, 15.6), listOf(ComponenteAvaliacao("Quizes", 20), ComponenteAvaliacao("Projeto", 80)))
+        val p = Student(123454, "Pedro", grades =  mutableListOf(13.0, 15.4, 9.5, 20), componenteAvaliacao = ComponenteAvaliacao("Oral", 10))
 
         val gen = XMLGenerator(MyXMLMapping())
 
@@ -155,4 +192,8 @@ class Tests{
 
     }
 
+    @Test
+    fun test(){
+
+    }
 }

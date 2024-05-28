@@ -5,7 +5,7 @@ import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
 interface Visitor {
-    fun visit(xml: XML)
+    fun visit(xml: Element)
 }
 data class XML(
     var version: String,
@@ -13,14 +13,13 @@ data class XML(
     var rootElement: Element?
 ) {
     fun accept(visitor: Visitor) {
-        visitor.visit(this)
+        rootElement?.accept(visitor)
     }
 
     class addAttributeVisitor(private val elementTitle: String, private val newAttribute: String, private val newContent: String) : Visitor {
-        override fun visit(xml: XML) {
-            xml.rootElement?.let { root ->
-                addAttribute(root, elementTitle, newAttribute, newContent)
-            }
+        override fun visit(xml: Element) {
+            addAttribute(xml, elementTitle, newAttribute, newContent)
+
         }
 
         private fun addAttribute(element: Element, elementTitle: String, newAttribute: String, newContent: String) {
@@ -34,10 +33,8 @@ data class XML(
     }
 
     class RenameElementVisitor(private val oldTitle: String, private val newTitle: String) : Visitor {
-        override fun visit(xml: XML) {
-            xml.rootElement?.let { root ->
-                renameElement(root, oldTitle, newTitle)
-            }
+        override fun visit(xml: Element) {
+            renameElement(xml, oldTitle, newTitle)
         }
 
         private fun renameElement(element: Element, oldTitle: String, newTitle: String) {
@@ -48,13 +45,12 @@ data class XML(
                 renameElement(child, oldTitle, newTitle)
             }
         }
+
     }
 
-    class renameAttributeVisitor(private val elementTitle: String, private val attributeName: String, private val newName: String): Visitor{
-        override fun visit(xml: XML) {
-            xml.rootElement?.let { root ->
-                renameAttribute(root, elementTitle, attributeName, newName)
-            }
+    class RenameAttributeVisitor(private val elementTitle: String, private val attributeName: String, private val newName: String): Visitor{
+        override fun visit(xml: Element) {
+            renameAttribute(xml, elementTitle, attributeName, newName)
         }
 
         private fun renameAttribute(element: Element, elementTitle: String, attributeName: String, newName: String){
@@ -68,10 +64,8 @@ data class XML(
     }
 
     class RemoveAttributeVisitor(private val elementTitle: String, private val attributeName: String) : Visitor {
-        override fun visit(xml: XML) {
-            xml.rootElement?.let { root ->
-                removeAttribute(root,elementTitle, attributeName)
-            }
+        override fun visit(xml: Element) {
+            removeAttribute(xml ,elementTitle, attributeName)
         }
 
         private fun removeAttribute(element: Element, elementTitle: String, attributeName: String) {
@@ -85,10 +79,8 @@ data class XML(
     }
 
     class RemoveElementVisitor(private val elementTitle: String) : Visitor {
-        override fun visit(xml: XML) {
-            xml.rootElement?.let { root ->
-                removeElement(root,elementTitle)
-            }
+        override fun visit(xml: Element) {
+            removeElement(xml, elementTitle)
         }
 
         private fun removeElement(element: Element, elementTitle: String) {
@@ -124,28 +116,30 @@ data class XML(
 
     private fun appendElement(element: Element?, stringBuilder: StringBuilder, indentLevel: Int) {
         val indent = " ".repeat(indentLevel * 4)
-        stringBuilder.append("$indent<${element!!.tag}>")
-
+        stringBuilder.append("$indent<${element!!.tag}")
         if (element.attributes.isNotEmpty()) {
-            val newIdent = " ".repeat((indentLevel + 1) * 4)
             element.attributes.forEach { (name, value) ->
-                stringBuilder.appendLine()
-                stringBuilder.append("$newIdent<$name>$value</$name>")
+                stringBuilder.append(" $name=\"$value\"")
             }
         }
-
-        if (element.children.isEmpty()) {
-            stringBuilder.appendLine()
-            stringBuilder.appendLine("$indent</${element.tag}>")
-        } else {
-            stringBuilder.appendLine()
-            element.children.forEach { child ->
-                appendElement(child, stringBuilder, indentLevel + 1)
+        if (element.children.isEmpty() && element.content == null) {
+            stringBuilder.append("/>")
+        }else{
+            stringBuilder.append(">")
+            if (element.children.isEmpty()) {
+                stringBuilder.append("${element.content}</${element.tag}>")
+            } else {
+                element.children.forEach { child ->
+                    stringBuilder.appendLine()
+                    appendElement(child, stringBuilder, indentLevel + 1)
+                }
+                stringBuilder.append("\n$indent</${element.tag}>")
             }
-            stringBuilder.appendLine("$indent</${element.tag}>")
+
         }
 
     }
+}
 
     fun ListXPath() {
         val xmlFile = File("NewFile") // Ruta relativa al archivo XML
@@ -173,4 +167,4 @@ data class XML(
         return xpath.evaluate(xpathExpression, document, XPathConstants.NODESET) as NodeList
     }
 
-}
+
