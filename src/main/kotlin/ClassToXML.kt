@@ -60,6 +60,7 @@ class XMLGenerator(val typeMapping: TypeMapping) {
             val propertyValue = property.getter.call(obj)
 
             if (property.findAnnotation<XmlAttribute>() != null) {
+
                 element.addAttribute(propertyName, typeMapping.mapSimpleTypes(propertyValue))
             }
             else {
@@ -70,6 +71,7 @@ class XMLGenerator(val typeMapping: TypeMapping) {
         }
         return element
     }
+
 
    private fun createElementChild(propertyValue: Any, propertyName: String, element: Element){
        when {
@@ -92,6 +94,7 @@ class XMLGenerator(val typeMapping: TypeMapping) {
            }
        }
    }
+
 
 
     val KClass<*>.dataClassFields: List<KProperty<*>>

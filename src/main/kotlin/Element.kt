@@ -9,6 +9,12 @@ data class Element(
     init {
         parent?.children?.add(this)
     }
+//Modificacion para API
+    fun element(tag: String, init: Element.() -> Unit) {
+        val child = Element(tag, this).apply(init)
+        children.add(child)
+    }
+
 
     fun accept(visitor: Visitor) {
         visitor.visit(this)
