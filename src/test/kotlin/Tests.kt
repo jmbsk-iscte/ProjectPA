@@ -1,5 +1,8 @@
-import org.junit.jupiter.api.Assertions.*
+
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 class Tests{
 
@@ -9,10 +12,6 @@ class Tests{
     var fotr = Element("Book1", books)
     var t2t = Element("Book2", fotr)
     var rotk = Element("Book3", t2t, "Return of the King")
-
-
-
-
 
     @Test
     fun testXMLCreation(){
@@ -47,15 +46,11 @@ class Tests{
             override fun visit(xml: Element) {
                 println(xml.tag)
             }
-
         })
 
         xml.accept(XML.RenameElementVisitor("Book", "Livro"))
 
-
-
         xml.accept(XML.RenameAttributeVisitor("Livro", "Title", "Título"))
-
         println(xml.prettyPrint())
 
     }
@@ -151,13 +146,14 @@ class Tests{
      )
 
      */
-    data class Student(
 
+    @XmlPostMappingAdapter(AttributeOrderAdapter::class)
+    data class Student(
         @XmlName("Num") val number: Int,
         @XmlName("Nome") val name: String,
         @XmlAttribute val worker: Boolean? = false,
-        @XmlName("Notas") val grades: MutableList<*>? = null,
-        @XmlName("avaliacao")val avaliacao: List<*>? = null,
+        @XmlName("Notas") @field:XmlJavaTypeAdapter(ListToStringAdapter::class) val grades: MutableList<*>?,
+        @XmlName("avaliacao") val avaliacao: List<ComponenteAvaliacao>? = null,
         val componenteAvaliacao: ComponenteAvaliacao? = null
     )
 
@@ -188,8 +184,6 @@ class Tests{
         val newXML = XML("1.0", "UTF-8", studentsXML)
 
         println(newXML.prettyPrint())
-
-
 
     }
 
