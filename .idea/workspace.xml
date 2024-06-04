@@ -4,13 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="Corrigido erro de print repetido.&#10;Criada função createElementChild em ClassToXML.kt. Função cria filhos dentro de filhos, não utiliza anotações nestes casos.">
+    <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/javax_xml_bind_jaxb_api.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/ListToStringAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p__m___Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p__m___Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p__m___Changes_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p__m___Changes_1.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_11_p__m___Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_11_p__m___Changes_.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_05_2024_3_29_p__m___Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_05_2024_3_29_p__m___Changes_.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectPA.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectPA.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TextFile" beforeDir="false" afterPath="$PROJECT_DIR$/TextFile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Element.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Element.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/XML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/XML.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,4 +46,223 @@
 }</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
-  
+      <UrlAndAccount>
+        <option name="accountId" value="65b9e287-5b0a-47df-bb9b-f5a994a10879" />
+        <option name="url" value="https://github.com/jmbsk-iscte/ProjectPA" />
+      </UrlAndAccount>
+    </option>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="KotlinCodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2ey3VI0Tzy8BjQY3FxiVk6uWiOg" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.Tests.XMLGeneratorTest.executor": "Run",
+    "JUnit.Tests.test.executor": "Run",
+    "JUnit.Tests.testAddAndRemoveElementsFromElement.executor": "Run",
+    "JUnit.Tests.testAddAndRemoveFromElement.executor": "Run",
+    "JUnit.Tests.testAddAttributeDoc.executor": "Run",
+    "JUnit.Tests.testAddRemoveAndAlterAttributesFromElement.executor": "Run",
+    "JUnit.Tests.testDoc.executor": "Run",
+    "JUnit.Tests.testElementCreation.executor": "Run",
+    "JUnit.Tests.testGettingChildAndParent.executor": "Run",
+    "JUnit.Tests.testPrettyPrint.executor": "Run",
+    "JUnit.Tests.testXMLCreation.executor": "Run",
+    "JUnit.Tests.tests.executor": "Run",
+    "JUnit.Tests.xMLGeneratorTest.executor": "Run",
+    "Kotlin script (Beta).Unnamed.executor": "Coverage",
+    "Kotlin.ClassToXMLKt.executor": "Run",
+    "Kotlin.Teste2Kt.executor": "Run",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "CamilaV3",
+    "ignore.virus.scanning.warn.message": "true",
+    "jdk.selected.JAVA_MODULE": "21",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/skarp/git/Teste2",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="JUnit.Tests.xMLGeneratorTest">
+    <configuration name="Tests.XMLGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ProjectPA" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="Tests" />
+      <option name="METHOD_NAME" value="XMLGeneratorTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Tests.testElementCreation" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ProjectPA" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="Tests" />
+      <option name="METHOD_NAME" value="testElementCreation" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Tests.xMLGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ProjectPA" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="Tests" />
+      <option name="METHOD_NAME" value="xMLGeneratorTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ClassToXMLKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="ClassToXMLKt" />
+      <module name="ProjectPA" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Teste2Kt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Teste2Kt" />
+      <module name="ProjectPA" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.Tests.xMLGeneratorTest" />
+        <item itemvalue="JUnit.Tests.XMLGeneratorTest" />
+        <item itemvalue="Kotlin.Teste2Kt" />
+        <item itemvalue="Kotlin.ClassToXMLKt" />
+        <item itemvalue="JUnit.Tests.testElementCreation" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-4f524021" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="" />
+      <created>1712863013596</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1712863013596</updated>
+      <workItem from="1715800798285" duration="102000" />
+      <workItem from="1716042336434" duration="15719000" />
+    </task>
+    <task id="LOCAL-00001" summary="Criação do projecto, das classes XML.kt e Element.kt">
+      <option name="closed" value="true" />
+      <created>1712867353129</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1712867353129</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Feito 1. a 4., falta escrita em ficheiro.">
+      <option name="closed" value="true" />
+      <created>1713304596688</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1713304596688</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?).">
+      <option name="closed" value="true" />
+      <created>1713351466394</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1713351466394</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Alterado o pretty print.">
+      <option name="closed" value="true" />
+      <created>1714610568790</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1714610568790</updated>
+    </task>
+    <task id="LOCAL-00005" summary="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt">
+      <option name="closed" value="true" />
+      <created>1715216963416</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1715216963416</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="Criação do projecto, das classes XML.kt e Element.kt" />
+    <MESSAGE value="Feito 1. a 4., falta escrita em ficheiro." />
+    <MESSAGE value="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?)." />
+    <MESSAGE value="Alterado o pretty print." />
+    <MESSAGE value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt" />
+    <option name="LAST_COMMIT_MESSAGE" value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/ProjectPA$Unnamed.ic" NAME="Unnamed Coverage Results" MODIFIED="1713179847930" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
+</project>

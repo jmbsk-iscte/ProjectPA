@@ -5,6 +5,7 @@ import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.isAccessible
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 //Definicion de anotaciones
 @Target(AnnotationTarget.PROPERTY)
@@ -22,6 +23,22 @@ annotation class XmlIgnore
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class XmlString
+
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+annotation class XmlPostMappingAdapter(val adapter: KClass<out PostMappingAdapter>)
+
+interface PostMappingAdapter {
+    fun customize(element: Element): Element
+}
+
+class AttributeOrderAdapter : PostMappingAdapter {
+    override fun customize(element: Element): Element {
+        // Reordena los atributos en orden alfabético por nombre
+        element.attributes = element.attributes.sortedBy { it.first }.toMutableList()
+        return element
+    }
+}
 
 interface TypeMapping {
     fun mapSimpleTypes(obj: Any?): String
@@ -69,15 +86,18 @@ class XMLGenerator(val typeMapping: TypeMapping) {
                 }
             }
         }
+        // Aplica el adaptador posterior al mapeo si está presente
+        val postMappingAdapter = obj::class.findAnnotation<XmlPostMappingAdapter>()?.adapter?.java?.getDeclaredConstructor()?.newInstance()
+        if (postMappingAdapter != null) {
+            return postMappingAdapter.customize(element)
+        }
         return element
     }
 
 
    private fun createElementChild(propertyValue: Any, propertyName: String, element: Element){
        when {
-
            typeMapping.isSimpleType(propertyValue) -> Element(propertyName, element, typeMapping.mapSimpleTypes(propertyValue))
-
            propertyValue is List < * > -> {
                val childElement = Element(propertyName, element)
                propertyValue.forEach {
@@ -86,7 +106,6 @@ class XMLGenerator(val typeMapping: TypeMapping) {
                    }
                }
            }
-
            else -> {
            val childElement = createElement(propertyValue)
            childElement.tag = propertyName
