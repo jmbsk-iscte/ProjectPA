@@ -1,28 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Students>
-    <Student worker="TRUE">
-        <Num>70109</Num>
-        <Nome>João</Nome>
-        <Notas>
-            <Double>14.0</Double>
-            <Double>15.6</Double>
-            <Double>14.3</Double>
-            <Double>15.6</Double>
-        </Notas>
-        <avaliacao>
-            <ComponenteAvaliacao avaliacao="Quizes" peso="20"/>
-            <ComponenteAvaliacao avaliacao="Projeto" peso="80"/>
-        </avaliacao>
-    </Student>
-    <Student worker="FALSE">
-        <Num>123454</Num>
-        <Nome>Pedro</Nome>
-        <Notas>
-            <Double>13.0</Double>
-            <Double>15.4</Double>
-            <Double>9.5</Double>
-            <Int>20</Int>
-        </Notas>
-        <componenteAvaliacao avaliacao="Oral" peso="10"/>
-    </Student>
-</Students>
+<Person age="30">
+    <name>John Doe</name>
+    <address>
+        <street>123 Main St</street>
+        <city>Anytown</city>
+    </address>
+    <preferences likesMusic="TRUE">
+        <favoriteGenres>
+            <String>Rock</String>
+            <String>Jazz</String>
+        </favoriteGenres>
+    </preferences>
+</Person>

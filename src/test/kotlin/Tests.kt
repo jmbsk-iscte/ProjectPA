@@ -1,194 +1,219 @@
 
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+import org.junit.jupiter.api.assertThrows
 
-class Tests{
+class Tests {
 
     val books = Element("Books")
-    val xml = XML("1.0", "UTF-8",books)
+    val xml = XML("1.0", "UTF-8", books)
 
-    var fotr = Element("Book1", books)
-    var t2t = Element("Book2", fotr)
-    var rotk = Element("Book3", t2t, "Return of the King")
+    var fotr = Element("Book", books)
+    var t2t = Element("Book", fotr)
+    var rotk = Element("Book", t2t, "Return of the King")
 
     @Test
-    fun testXMLCreation(){
+    fun testElement() {
+        assertTrue("Book" == fotr.tag)
+
+        val exception = assertThrows<IllegalArgumentException> { Element("Lord of the Rings") }
+        assertTrue(exception.message == "Invalid XML tag: Lord of the Rings")
+
+        fotr.addListOfAttributes(listOf("Title" to "The Fellowship of the Ring", "Volume" to "1"))
+
+        assertFalse(books.children.isEmpty())
+        assertTrue(fotr.attributes.any { it.first == "Title" && it.second == "The Fellowship of the Ring" })
+        assertFalse(fotr.attributes.any { it.first == "Title" && it.second == "The Two Towers" })
+        assertTrue(books.children.contains(fotr))
+    }
+
+    @Test
+    fun testXMLCreation() {
         assertTrue("1.0" == xml.version)
         assertTrue("UTF-8" == xml.encoding)
         assertTrue("Books" == xml.rootElement?.tag)
     }
 
     @Test
-    fun testElementCreation(){
-        fotr.addListOfAttributes(listOf("Title" to "The Fellowship of the Ring", "Volume" to "1"))
-        assertTrue("FotR" == fotr.tag)
-        assertFalse(books.children.isEmpty())
-        assertTrue(fotr.attributes.any{it.first == "Title" && it.second == "The Fellowship of the Ring"})
-        assertFalse(fotr.attributes.any{it.first == "Title" && it.second == "The Two Towers"})
-        assertTrue(books.children.contains(fotr))
+    fun testAddAndRemoveChild() {
+        val newBook = Element("BookTest")
+        assertTrue(books.addChild(newBook))
+        assertTrue(books.children.contains(newBook))
+
+        books.removeChild(newBook)
+        assertFalse(books.children.contains(newBook))
     }
 
     @Test
-    fun testXMLVisitor(){
+    fun testAddAndRemoveAttribute() {
+        fotr.addAttribute("Author", "J.R.R. Tolkien")
+        assertTrue(fotr.attributes.any { it.first == "Author" && it.second == "J.R.R. Tolkien" })
+
+        fotr.removeAttribute("Author")
+        assertFalse(fotr.attributes.any { it.first == "Author" && it.second == "J.R.R. Tolkien" })
+    }
+
+    @Test
+    fun testRenameAttribute() {
+        fotr.addAttribute("Author", "J.R.R. Tolkien")
+        fotr.renameAttribute("Author", "Writer")
+        assertTrue(fotr.attributes.any { it.first == "Writer" && it.second == "J.R.R. Tolkien" })
+        assertFalse(fotr.attributes.any { it.first == "Author" && it.second == "J.R.R. Tolkien" })
+    }
+
+    @Test
+    fun testAlterAttributeContent() {
+        fotr.addAttribute("Author", "J.R.R. Tolkien")
+        fotr.alterAttributeContent("Author", "John Ronald Reuel Tolkien")
+        assertTrue(fotr.attributes.any { it.first == "Author" && it.second == "John Ronald Reuel Tolkien" })
+    }
+
+    @Test
+    fun testAddAttributeVisitor() {
+        xml.accept(XML.AddAttributeVisitor("Book", "Genre", "Fantasy"))
+        assertTrue(fotr.attributes.any { it.first == "Genre" && it.second == "Fantasy" })
+        assertTrue(t2t.attributes.any { it.first == "Genre" && it.second == "Fantasy" })
+        assertTrue(rotk.attributes.any { it.first == "Genre" && it.second == "Fantasy" })
+    }
+
+    @Test
+    fun testRenameElementVisitor() {
+        xml.accept(XML.RenameElementVisitor("Book", "Livro"))
+        assertTrue(fotr.tag == "Livro")
+        assertTrue(t2t.tag == "Livro")
+        assertTrue(rotk.tag == "Livro")
+    }
+
+    @Test
+    fun testRenameAttributeVisitor() {
         fotr.addListOfAttributes(listOf("Title" to "The Fellowship of the Ring", "Volume" to "1"))
         t2t.addListOfAttributes(listOf("Title" to "The Two Towers", "Volume" to "2"))
+        xml.accept(XML.RenameAttributeVisitor("Book", "Title", "Título"))
+        assertTrue(fotr.attributes.any { it.first == "Título" && it.second == "The Fellowship of the Ring" })
+        assertTrue(t2t.attributes.any { it.first == "Título" && it.second == "The Two Towers" })
+    }
 
-        assertTrue(rotk.content == "Return of the King")
+    @Test
+    fun testRemoveAttributeVisitor() {
+        fotr.addAttribute("Author", "J.R.R. Tolkien")
+        xml.accept(XML.RemoveAttributeVisitor("Book", "Author"))
+        assertFalse(fotr.attributes.any { it.first == "Author" && it.second == "J.R.R. Tolkien" })
+    }
 
-        assertFalse(rotk.addChild(t2t))
+    @Test
+    fun testRemoveElementVisitor() {
+        xml.accept(XML.RemoveElementVisitor("Book"))
+        assertTrue(books.children.isEmpty())
+    }
 
-        println(xml.prettyPrint())
+    @Test
+    fun testPrettyPrint() {
+        val expectedOutput = """
+            <?xml version="1.0" encoding="UTF-8"?>
+            <Books>
+                <Book Title="The Fellowship of the Ring" Volume="1">
+                    <Book Title="The Two Towers" Volume="2">
+                        <Book>Return of the King</Book>
+                    </Book>
+                </Book>
+            </Books>
+        """.trimIndent()
+        fotr.addListOfAttributes(listOf("Title" to "The Fellowship of the Ring", "Volume" to "1"))
+        t2t.addListOfAttributes(listOf("Title" to "The Two Towers", "Volume" to "2"))
+        val actualOutput = xml.prettyPrint().trim()
+        assertEquals(expectedOutput, actualOutput)
+    }
 
-
-        xml.accept(object: Visitor{
-            override fun visit(xml: Element) {
-                println(xml.tag)
+    @Test
+    fun testXMLBuilder() {
+        val xml = xml {
+            version("1.0")
+            encoding("UTF-8")
+            root("Books") {
+                element("Book") {
+                    addAttribute("Title", "The Fellowship of the Ring")
+                    addAttribute("Volume", "1")
+                }
             }
-        })
+        }
 
-        xml.accept(XML.RenameElementVisitor("Book", "Livro"))
+        assertEquals("1.0", xml.version)
+        assertEquals("UTF-8", xml.encoding)
 
-        xml.accept(XML.RenameAttributeVisitor("Livro", "Title", "Título"))
-        println(xml.prettyPrint())
+        val rootElement = xml.rootElement
+        assertNotNull(rootElement)
+        assertEquals("Books", rootElement?.tag)
 
-    }
-    /*
-    @Test
-    fun testAddAndRemoveElementsFromElement(){
-        assertTrue(lotr.children.contains(rotk))
-        lotr.removeChild(rotk)
-        assertFalse(lotr.children.contains(rotk))
-        lotr.addChild(rotk)
-        assertTrue(lotr.children.contains(rotk))
+        val bookElement = rootElement?.children?.firstOrNull()
+        assertNotNull(bookElement)
+        assertEquals("Book", bookElement?.tag)
+        assertEquals("The Fellowship of the Ring", bookElement?.attributes?.find { it.first == "Title" }?.second)
+        assertEquals("1", bookElement?.attributes?.find { it.first == "Volume" }?.second)
     }
 
-    @Test
-    fun testAddRemoveAndAlterAttributesFromElement(){
-        lotr.addAttribute("Genre", "EpicHighFantasy")
-        lotr.addAttribute("FirstPublication", "1954")
-
-        assertTrue("FirstPublication" == lotr.attributes[1].first)
-
-        fell.addListOfAttributes(mutableListOf(("ISBN" to "0618002227"), ("Volume" to "2")))
-
-        assertTrue(fell.attributes.any {it.first == "ISBN" && it.second == "0618002227"})
-
-        fell.removeAttribute("ISBN")
-
-        assertFalse(fell.attributes.any {it.first == "ISBN" || it.second == "0618002227"})
-
-        assertTrue("2" == fell.attributes[0].second)
-
-        fell.alterAttributeContent("Volume", "1")
-
-        assertTrue("1" == fell.attributes[0].second)
-    }
-
-    @Test
-    fun testGettingChildAndParent(){
-        assertTrue(lotr.children.containsAll(listOf(fell, twot, rotk)))
-        assertTrue(lotr == fell.parent)
-    }
-
-    @Test
-    fun testPrettyPrint(){
-        lotr.addAttribute("Genre", "EpicHighFantasy")
-        lotr.addAttribute("FirstPublication", "1954")
-        fell.addListOfAttributes(mutableListOf(("ISBN" to "0618002227"), ("Volume" to "1")))
-        twot.addListOfAttributes(mutableListOf(("Volume" to "2"), ("ISBN" to "0008376077")))
-        rotk.addListOfAttributes(mutableListOf(("Volume" to "3"), ("ISBN" to "0345339738")))
-        fellMovie.addListOfAttributes(mutableListOf(("Year" to "2001"), ("Running time" to "178 minutes")))
-        fell.addChild(fellMovie)
-        println(books.prettyPrint())
-    }
-
-    @Test
-    fun testDoc(){
-        fell.addListOfAttributes(mutableListOf(("ISBN" to "0618002227"), ("Volume" to "1")))
-        twot.addListOfAttributes(mutableListOf(("Volume" to "2"), ("ISBN" to "0008376077")))
-        rotk.addListOfAttributes(mutableListOf(("Volume" to "3"), ("ISBN" to "0345339738")))
-
-        assertFalse(twot.attributes.any {it.first == "FirstEdition" || it.second == "11November1954"})
-        //assertTrue(books.addAttribute("TheTwoTowers", "FirstEdition", "11November1954"))
-
-        assertTrue("TheTwoTowers" == twot.tag)
-        //assertTrue(books.renameElement("TheTwoTowers", "TheLordOfTheRings:TheTwoTowers"))
-        //assertTrue("TheLordOfTheRings:TheTwoTowers"==twot.tag)
-
-        //books.renameAttribute("TheLordOfTheRings:TheTwoTowers", "FirstEdition", "1stEdition")
-        //assertTrue(twot.attributes.any {it.first == "1stEdition" && it.second == "11November1954"})
-
-        println(books.prettyPrint())
-
-        //books.removeAttribute("TheLordOfTheRings:TheTwoTowers", "1stEdition")
-        //assertFalse(twot.attributes.any {it.first == "1stEdition" || it.second == "11November1954"})
-
-        println(books.prettyPrint())
-
-
-        //println(books.prettyPrint())
-
-        //books.removeElement("TheLordOfTheRings")
-
-        //println(books.prettyPrint())
-
-
-    }
-
-     Teste sem anotações
-    data class Student(
-         val number: Int,
-         val name: String,
-         val worker: Boolean? = null,
-         val grades: MutableList<Double>? = null
-     )
-
-     */
-
+    // New tests for XMLGenerator
     @XmlPostMappingAdapter(AttributeOrderAdapter::class)
-    data class Student(
-        @XmlName("Num") val number: Int,
-        @XmlName("Nome") val name: String,
-        @XmlAttribute val worker: Boolean? = false,
-        @XmlName("Notas") @field:XmlJavaTypeAdapter(ListToStringAdapter::class) val grades: MutableList<*>?,
-        @XmlName("avaliacao") val avaliacao: List<ComponenteAvaliacao>? = null,
-        val componenteAvaliacao: ComponenteAvaliacao? = null
+    data class Person(
+        @XmlName("name")
+        val fullName: String,
+
+        @XmlAttribute
+        val age: Int,
+
+        @XmlIgnore
+        val password: String,
+
+        val address: Address,
+
+
+        val preferences: Preferences
     )
 
-    data class ComponenteAvaliacao(
-        @XmlAttribute val avaliacao: String,
-        //@XmlString(AddPercentage::class)
-        @XmlAttribute val peso: Int
+    data class Address(
+        @XmlName("street")
+        val streetName: String,
+
+        @XmlName("city")
+        val cityName: String
     )
 
+    data class Preferences(
+        @XmlAttribute
+        val likesMusic: Boolean,
+
+        val favoriteGenres: List<String>
+    )
 
     @Test
-    fun xMLGeneratorTest(){
+    fun testXMLGenerator() {
+        val person = Person(
+            fullName = "John Doe",
+            age = 30,
+            password = "secret",
+            address = Address(streetName = "123 Main St", cityName = "Anytown"),
+            preferences = Preferences(likesMusic = true, favoriteGenres = listOf("Rock", "Jazz"))
+        )
 
-        val j = Student(70109, "João", true, grades =  mutableListOf(14.0, 15.6, 14.3, 15.6), listOf(ComponenteAvaliacao("Quizes", 20), ComponenteAvaliacao("Projeto", 80)))
-        val p = Student(123454, "Pedro", grades =  mutableListOf(13.0, 15.4, 9.5, 20), componenteAvaliacao = ComponenteAvaliacao("Oral", 10))
+        val typeMapping = MyXMLMapping()
+        val generator = XMLGenerator(typeMapping)
+        val personElement = generator.createElement(person)
 
-        val gen = XMLGenerator(MyXMLMapping())
+        assertEquals("Person", personElement.tag)
+        assertTrue(personElement.attributes.any { it.first == "age" && it.second == "30" })
+        assertFalse(personElement.attributes.any { it.first == "password" })
 
-        val studentsXML = Element("Students")
+        val addressElement = personElement.children.find { it.tag == "address" }
+        assertNotNull(addressElement)
+        assertTrue(addressElement!!.children.any { it.tag == "street" && it.content == "123 Main St" })
+        assertTrue(addressElement.children.any { it.tag == "city" && it.content == "Anytown" })
 
-        val jElement = gen.createElement(j)
-        val pElement = gen.createElement(p)
+        val preferencesElement = personElement.children.find { it.tag == "preferences" }
+        assertNotNull(preferencesElement)
+        print(XML("1.0", "UTF-8", personElement).prettyPrint())
+        assertTrue(preferencesElement!!.attributes.any { it.first == "likesMusic" && it.second == "TRUE" })
+        val favoriteGenresElement = preferencesElement.children.find { it.tag == "favoriteGenres"}
 
-        studentsXML.addChild(jElement)
-        studentsXML.addChild(pElement)
-
-
-        val newXML = XML("1.0", "UTF-8", studentsXML)
-
-        println(newXML.prettyPrint())
-
-    }
-
-    @Test
-    fun test(){
-
+        assertTrue(favoriteGenresElement!!.children.any { it.tag == "String" && it.content == "Rock" })
+        assertTrue(favoriteGenresElement.children.any { it.tag == "String" && it.content == "Jazz" })
     }
 }
