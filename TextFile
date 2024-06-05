@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Person age="30">
-    <name>John Doe</name>
-    <address>
-        <street>123 Main St</street>
-        <city>Anytown</city>
-    </address>
-    <preferences likesMusic="TRUE">
-        <favoriteGenres>
-            <String>Rock</String>
-            <String>Jazz</String>
-        </favoriteGenres>
-    </preferences>
-</Person>
+<Books>
+    <Book Title="The Fellowship of the Ring" Volume="1">
+        <Book Title="The Two Towers" Volume="2">
+            <Book>Return of the King</Book>
+        </Book>
+    </Book>
+</Books>
