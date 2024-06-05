@@ -5,23 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f0476d3c-0031-49f0-af1e-f47cc3b5698c" name="Changes" comment="Terminados visitors e ClassToXML.kt">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p__m___Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p__m___Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p__m___Changes_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_05_p_ m__[Changes]1/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_11_p__m___Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_26_05_2024_3_11_p_ m__[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_06_2024_5_37_p__m___Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_3_06_2024_5_37_p__m___Changes_.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_05_2024_3_29_p__m___Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_26_05_2024_3_29_p_ m__[Changes]/shelved.patch" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_3_06_2024_5_38_p__m___Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_3_06_2024_5_38_p__m___Changes_.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ClassToXML.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DSL.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/XML.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/element.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/TextFile" beforeDir="false" afterPath="$PROJECT_DIR$/TextFile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/DSL.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/DSL.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/Element.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/Element.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/ListToStringAdapter.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/XML.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/XML.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/kotlin/Tests.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,13 +50,11 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/src/main/kotlin/ClassToXML.kt" root0="FORCE_HIGHLIGHTING" />
   </component>
-  <component name="JavaAutoRunManager">
-    <enabled-run-configurations>
-      <run-configuration type="JUnit" name="Tests.testXMLGenerator" />
-    </enabled-run-configurations>
-  </component>
   <component name="KotlinCodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo">{
     &quot;associatedIndex&quot;: 0
@@ -114,7 +101,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "Joao",
     "ignore.virus.scanning.warn.message": "true",
     "jdk.selected.JAVA_MODULE": "21",
     "kotlin-language-version-configured": "true",
@@ -182,8 +169,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.Tests.testXMLGenerator" />
         <item itemvalue="JUnit.Tests" />
+        <item itemvalue="JUnit.Tests.testXMLGenerator" />
         <item itemvalue="JUnit.Tests.testRenameAttributeVisitor" />
         <item itemvalue="JUnit.Tests.testXMLBuilder" />
         <item itemvalue="JUnit.Tests.xMLGeneratorTest" />
@@ -248,7 +235,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715216963416</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt">
+      <option name="closed" value="true" />
+      <created>1717545481803</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1717545481803</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -283,7 +278,7 @@
     <MESSAGE value="Feito 1. a 4., falta escrita em ficheiro." />
     <MESSAGE value="Feito 6. a 10., falta escrita em ficheiro e objectos visitantes(?)." />
     <MESSAGE value="Alterado o pretty print." />
-    <MESSAGE value="+ Métodos globais no XML.kt&#10;+ Visitors no XML.kt" />
+    <MESSAGE value="+Testes&#10;+Kdocs" />
     <MESSAGE value="Terminados visitors e ClassToXML.kt" />
     <option name="LAST_COMMIT_MESSAGE" value="Terminados visitors e ClassToXML.kt" />
   </component>
